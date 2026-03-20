@@ -2,6 +2,7 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from server.db.session import init_db
 from server.routers.auth import router as auth_router
+from server.routers.gadgets import router as gadgets_router
 import logging
 from redis import asyncio as aioredis
 from fastapi_limiter import FastAPILimiter
@@ -25,3 +26,4 @@ app = FastAPI(
 )
 
 app.include_router(auth_router, prefix="/v1/auth")
+app.include_router(gadgets_router, prefix="/v1/gadgets")
