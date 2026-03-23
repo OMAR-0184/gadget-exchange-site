@@ -31,6 +31,7 @@ class GadgetResponse(BaseModel):
     description: str
     category: str
     price: float
+    personal_price: Optional[float] = None
     condition: str
     image_urls: list[str]
     is_verified: bool

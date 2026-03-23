@@ -16,6 +16,8 @@ from sqlmodel import SQLModel
 from server.core.config import settings
 from server.models.user import User
 from server.models.gadget import Gadget
+from server.models.bargain import BargainSession
+from server.models.chat import ChatMessage
 
 target_metadata = SQLModel.metadata
 

@@ -32,3 +32,26 @@ async def get_current_user(
     if user is None:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="User not found")
     return user
+
+from typing import Optional
+from fastapi import Request
+
+async def get_optional_current_user(
+    request: Request,
+    session: AsyncSession = Depends(get_session)
+) -> Optional[User]:
+    auth_header = request.headers.get("Authorization")
+    if not auth_header or not auth_header.startswith("Bearer "):
+        return None
+    token = auth_header.split(" ")[1]
+    
+    try:
+        payload = jwt.decode(token, settings.SECRET_KEY, algorithms=[settings.ALGORITHM])
+        user_id: str = payload.get("sub")
+        if not user_id:
+            return None
+    except jwt.PyJWTError:
+        return None
+        
+    result = await session.execute(select(User).where(User.id == user_id))
+    return result.scalar_one_or_none()

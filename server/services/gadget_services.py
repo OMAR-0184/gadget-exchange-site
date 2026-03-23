@@ -16,7 +16,6 @@ class GadgetService:
         if gadget_in.price <= 0:
             raise HTTPException(status_code=400, detail="Price must be greater than 0")
 
-        # Auto-verify if all key fields are filled
         is_verified = bool(
             gadget_in.title and gadget_in.description and 
             gadget_in.image_urls and len(gadget_in.image_urls) > 0 and 
@@ -62,7 +61,6 @@ class GadgetService:
             setattr(gadget, key, value)
         gadget.updated_at = datetime.utcnow()
 
-        # Re-evaluate verification after edit
         gadget.is_verified = bool(
             gadget.title and gadget.description and 
             gadget.image_urls and len(gadget.image_urls) > 0 and 
@@ -84,12 +82,11 @@ class GadgetService:
         min_price: float | None = None,
         max_price: float | None = None,
         condition: str | None = None,
+        current_user: User | None = None,
     ) -> tuple[list[Gadget], str | None, int]:
-        # Base query: only active gadgets
         query = select(Gadget).where(Gadget.is_active == True)
         count_query = select(func.count()).select_from(Gadget).where(Gadget.is_active == True)
 
-        # Apply filters
         if search:
             query = query.where(col(Gadget.title).ilike(f"%{search}%"))
             count_query = count_query.where(col(Gadget.title).ilike(f"%{search}%"))
@@ -106,12 +103,10 @@ class GadgetService:
             query = query.where(Gadget.condition == condition)
             count_query = count_query.where(Gadget.condition == condition)
 
-        # Cursor-based pagination (cursor = ISO timestamp of last item's created_at)
         if cursor:
             cursor_dt = datetime.fromisoformat(cursor)
             query = query.where(Gadget.created_at < cursor_dt)
 
-        # Order by newest first, fetch limit+1 to detect if there's a next page
         query = query.order_by(Gadget.created_at.desc()).limit(limit + 1)
 
         result = await session.execute(query)
@@ -120,18 +115,73 @@ class GadgetService:
         count_result = await session.execute(count_query)
         total_count = count_result.scalar()
 
-        # Determine next cursor
         next_cursor = None
         if len(gadgets) > limit:
             gadgets = gadgets[:limit]
             next_cursor = gadgets[-1].created_at.isoformat()
 
-        return gadgets, next_cursor, total_count
+        # Inject personal_price and convert to dict
+        result_items = []
+        if current_user and gadgets:
+            from server.models.bargain import BargainSession
+            gadget_ids = [g.id for g in gadgets]
+            b_result = await session.execute(
+                select(BargainSession).where(
+                    BargainSession.gadget_id.in_(gadget_ids),
+                    BargainSession.buyer_id == current_user.id,
+                    BargainSession.status == "accepted"
+                )
+            )
+            bargains = b_result.scalars().all()
+            bargain_map = {b.gadget_id: b.current_offer for b in bargains}
+            for g in gadgets:
+                g_dict = g.model_dump()
+                g_dict["personal_price"] = bargain_map.get(g.id)
+                result_items.append(g_dict)
+        else:
+            for g in gadgets:
+                g_dict = g.model_dump()
+                g_dict["personal_price"] = None
+                result_items.append(g_dict)
+
+        return result_items, next_cursor, total_count
 
     @staticmethod
-    async def get_gadget_by_id(gadget_id: str, session: AsyncSession) -> Gadget:
+    async def get_gadget_by_id(gadget_id: str, session: AsyncSession, current_user: User | None = None) -> dict:
         result = await session.execute(select(Gadget).where(Gadget.id == gadget_id))
         gadget = result.scalar_one_or_none()
         if not gadget:
             raise HTTPException(status_code=404, detail="Gadget not found")
-        return gadget
+            
+        g_dict = gadget.model_dump()
+        g_dict["personal_price"] = None
+        
+        if current_user:
+            from server.models.bargain import BargainSession
+            b_result = await session.execute(
+                select(BargainSession).where(
+                    BargainSession.gadget_id == gadget_id,
+                    BargainSession.buyer_id == current_user.id,
+                    BargainSession.status == "accepted"
+                )
+            )
+            bargain = b_result.scalar_one_or_none()
+            if bargain:
+                g_dict["personal_price"] = bargain.current_offer
+                
+        return g_dict
+
+    @staticmethod
+    async def delete_gadget(gadget_id: str, seller: User, session: AsyncSession) -> dict:
+        result = await session.execute(select(Gadget).where(Gadget.id == gadget_id))
+        gadget = result.scalar_one_or_none()
+        if not gadget:
+            raise HTTPException(status_code=404, detail="Gadget not found")
+        if gadget.seller_id != seller.id:
+            raise HTTPException(status_code=403, detail="You can only delete your own listings")
+
+        gadget.is_active = False
+        gadget.updated_at = datetime.utcnow()
+        session.add(gadget)
+        await session.commit()
+        return {"message": "Gadget deleted successfully", "gadget_id": gadget_id}

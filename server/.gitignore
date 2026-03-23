@@ -60,3 +60,5 @@ logs/
 
 # Docker
 docker-compose.override.yml
+
+test_integration.py
