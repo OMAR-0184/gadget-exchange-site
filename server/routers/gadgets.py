@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends, Query, Form, File, UploadFile, status
 from sqlalchemy.ext.asyncio import AsyncSession
 from server.schemas.gadget import GadgetCreate, GadgetUpdate, GadgetResponse, GadgetListResponse
-from server.core.dependencies import get_session, get_current_user
+from server.core.dependencies import get_session, get_current_user, get_optional_current_user
 from server.services.gadget_services import GadgetService
 from server.services.cloudinary_service import CloudinaryService
 from server.models.user import User
@@ -57,14 +57,29 @@ async def list_gadgets(
     min_price: Optional[float] = Query(None, description="Minimum price"),
     max_price: Optional[float] = Query(None, description="Maximum price"),
     condition: Optional[str] = Query(None, description="Filter by condition"),
+    current_user: Optional[User] = Depends(get_optional_current_user),
     session: AsyncSession = Depends(get_session)
 ):
     items, next_cursor, total_count = await GadgetService.get_gadgets(
         session, cursor=cursor, limit=limit, search=search,
-        category=category, min_price=min_price, max_price=max_price, condition=condition
+        category=category, min_price=min_price, max_price=max_price, condition=condition,
+        current_user=current_user
     )
     return GadgetListResponse(items=items, next_cursor=next_cursor, total_count=total_count)
 
 @router.get("/{gadget_id}", response_model=GadgetResponse)
-async def get_gadget(gadget_id: str, session: AsyncSession = Depends(get_session)):
-    return await GadgetService.get_gadget_by_id(gadget_id, session)
+async def get_gadget(
+    gadget_id: str, 
+    current_user: Optional[User] = Depends(get_optional_current_user),
+    session: AsyncSession = Depends(get_session)
+):
+    return await GadgetService.get_gadget_by_id(gadget_id, session, current_user)
+
+@router.delete("/{gadget_id}", status_code=status.HTTP_200_OK)
+async def delete_gadget(
+    gadget_id: str,
+    current_user: User = Depends(get_current_user),
+    session: AsyncSession = Depends(get_session),
+):
+    return await GadgetService.delete_gadget(gadget_id, current_user, session)
+
