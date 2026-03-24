@@ -1,4 +1,5 @@
 from sqlmodel import SQLModel, Field
+from typing import Optional
 import uuid
 
 class User(SQLModel, table=True):
@@ -6,3 +7,5 @@ class User(SQLModel, table=True):
     email: str = Field(unique=True, index=True)
     hashed_password: str
     full_name: str
+    address: Optional[str] = Field(default=None)
+    phone: Optional[str] = Field(default=None)

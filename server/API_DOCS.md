@@ -360,6 +360,217 @@ Upon connecting, the server will immediately emit a JSON object of type `history
 
 ---
 
+## 5. User Profile Endpoints (`/users`)
+
+Manage your profile and delivery address.
+
+### 5.1 Get Profile
+- **Endpoint:** `GET /users/me`
+- **Auth Required:** Yes (`Bearer <token>`)
+
+**Success Response (200 OK):**
+```json
+{
+  "id": "usr_d8b894dc",
+  "email": "user@example.com",
+  "full_name": "John Doe",
+  "address": "123 Main St, City, State 12345",
+  "phone": "+1234567890"
+}
+```
+
+### 5.2 Update Delivery Address
+- **Endpoint:** `PATCH /users/me/address`
+- **Auth Required:** Yes (`Bearer <token>`)
+- **Content-Type:** `application/json`
+
+**Request Body:**
+```json
+{
+  "address": "123 Main St, City, State 12345",
+  "phone": "+1234567890"
+}
+```
+
+**Success Response (200 OK):** Returns updated user profile.
+
+---
+
+## 6. Order Endpoints (`/orders`)
+
+Full e-commerce ordering system with Cash on Delivery, delivery verification, and bill generation.
+
+### 6.1 Place Order
+Creates a new order (COD). Uses your saved address, or you can override it in the request. If a bargain price was negotiated, the personal price is used.
+
+- **Endpoint:** `POST /orders/`
+- **Auth Required:** Yes (`Bearer <token>`)
+- **Content-Type:** `application/json`
+
+**Request Body:**
+```json
+{
+  "items": [
+    { "gadget_id": "gdt_416f0378", "quantity": 1 }
+  ],
+  "shipping_address": "456 Oak Ave, Town, State 67890",
+  "phone": "+1987654321"
+}
+```
+> `shipping_address` and `phone` are optional if already set via `/users/me/address`.
+
+**Success Response (201 Created):**
+```json
+{
+  "id": "ord_a1b2c3d4",
+  "buyer_id": "usr_buyer123",
+  "status": "pending",
+  "payment_method": "cash_on_delivery",
+  "shipping_address": "456 Oak Ave, Town, State 67890",
+  "phone": "+1987654321",
+  "total_amount": 750.00,
+  "delivery_verification_code": "482916",
+  "verified_at": null,
+  "created_at": "2026-03-24T10:00:00Z",
+  "updated_at": "2026-03-24T10:00:00Z",
+  "items": [
+    {
+      "id": "oit_e5f6g7h8",
+      "gadget_id": "gdt_416f0378",
+      "seller_id": "usr_d8b894dc",
+      "quantity": 1,
+      "unit_price": 750.00,
+      "title": "iPhone 15 Pro"
+    }
+  ]
+}
+```
+
+**Error Responses:**
+- `400 Bad Request`: No address, no items, buying own listing, gadget inactive.
+- `409 Conflict`: Insufficient stock (another buyer got there first).
+
+---
+
+### 6.2 Get Order History
+Paginated list of your orders, newest first.
+
+- **Endpoint:** `GET /orders/`
+- **Auth Required:** Yes (`Bearer <token>`)
+
+**Query Parameters:**
+- `cursor` (string, optional): ISO timestamp cursor.
+- `limit` (int, default: `20`): Items per page (max `100`).
+
+**Success Response (200 OK):**
+```json
+{
+  "orders": [ ... ],
+  "next_cursor": "2026-03-24T10:00:00Z",
+  "total_count": 5
+}
+```
+
+---
+
+### 6.3 Get Order Detail
+- **Endpoint:** `GET /orders/{order_id}`
+- **Auth Required:** Yes (`Bearer <token>`)
+
+Returns the full order object with items. The `delivery_verification_code` is only visible to the buyer.
+
+**Error Responses:**
+- `403 Forbidden`: Not the buyer or a seller of any item.
+- `404 Not Found`: Order does not exist.
+
+---
+
+### 6.4 Cancel Order
+Cancel a pending or confirmed order. Stock is restored to the gadgets.
+
+- **Endpoint:** `POST /orders/{order_id}/cancel`
+- **Auth Required:** Yes (`Bearer <token>`)
+
+**Error Responses:**
+- `400 Bad Request`: Cannot cancel shipped/delivered orders.
+- `403 Forbidden`: Not the buyer.
+
+---
+
+### 6.5 Update Order Status (Seller)
+Allows a seller to advance the order through the fulfillment pipeline.
+
+- **Endpoint:** `PATCH /orders/{order_id}/status`
+- **Auth Required:** Yes (`Bearer <token>`)
+- **Content-Type:** `application/json`
+
+**Request Body:**
+```json
+{ "status": "confirmed" }
+```
+
+**Valid transitions:** `pending` → `confirmed` → `shipped` → `delivered`
+
+**Error Responses:**
+- `400 Bad Request`: Invalid status transition.
+- `403 Forbidden`: Not a seller in this order.
+
+---
+
+### 6.6 Verify Delivery
+The buyer shares their 6-digit verification code with the delivery person. Either party can submit it to confirm delivery.
+
+- **Endpoint:** `POST /orders/{order_id}/verify-delivery`
+- **Auth Required:** Yes (`Bearer <token>`)
+- **Content-Type:** `application/json`
+
+**Request Body:**
+```json
+{ "verification_code": "482916" }
+```
+
+**Success Response (200 OK):** Returns updated order with `status: "delivered"` and `verified_at` timestamp.
+
+**Error Responses:**
+- `400 Bad Request`: Invalid code, already verified, or cancelled order.
+
+---
+
+### 6.7 Get Bill
+Get a formatted bill/invoice for a completed order.
+
+- **Endpoint:** `GET /orders/{order_id}/bill`
+- **Auth Required:** Yes (`Bearer <token>`)
+
+**Success Response (200 OK):**
+```json
+{
+  "order_id": "ord_a1b2c3d4",
+  "buyer_name": "John Doe",
+  "shipping_address": "456 Oak Ave, Town, State 67890",
+  "phone": "+1987654321",
+  "payment_method": "cash_on_delivery",
+  "items": [
+    {
+      "title": "iPhone 15 Pro",
+      "quantity": 1,
+      "unit_price": 750.00,
+      "subtotal": 750.00
+    }
+  ],
+  "total_amount": 750.00,
+  "order_date": "2026-03-24T10:00:00Z",
+  "delivery_verified": true,
+  "verified_at": "2026-03-24T15:30:00Z"
+}
+```
+
+**Error Responses:**
+- `400 Bad Request`: Bill not available for `pending` or `cancelled` orders.
+- `403 Forbidden`: Not authorized.
+
+---
+
 ## 💻 Frontend Implementation Example (Vanilla JS)
 
 Here is a standard example of how to hit the authentication endpoints using JavaScript's native `fetch()` browser API:

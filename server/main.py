@@ -5,6 +5,8 @@ from server.routers.auth import router as auth_router
 from server.routers.gadgets import router as gadgets_router
 from server.routers.bargain import router as bargain_router
 from server.routers.chat import router as chat_router
+from server.routers.orders import router as orders_router
+from server.routers.users import router as users_router
 import logging
 from redis import asyncio as aioredis
 from fastapi_limiter import FastAPILimiter
@@ -13,6 +15,7 @@ from server.core.config import settings
 # Import models so Alembic/SQLModel can see them
 import server.models.bargain  # noqa: F401
 import server.models.chat  # noqa: F401
+import server.models.order  # noqa: F401
 
 logging.basicConfig(level=logging.INFO)
 
@@ -45,6 +48,8 @@ app.include_router(auth_router, prefix="/v1/auth")
 app.include_router(gadgets_router, prefix="/v1/gadgets")
 app.include_router(bargain_router, prefix="/v1/bargain")
 app.include_router(chat_router, prefix="/v1/chat")
+app.include_router(orders_router, prefix="/v1/orders")
+app.include_router(users_router, prefix="/v1/users")
 
 from fastapi.openapi.utils import get_openapi
 
