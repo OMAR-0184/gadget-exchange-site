@@ -16,6 +16,7 @@ class Gadget(SQLModel, table=True):
     
     image_urls: list[str] = Field(default=[], sa_column=Column(JSON))
     
+    stock: int = Field(default=1)
     is_verified: bool = Field(default=False)
     is_active: bool = Field(default=True)
     
