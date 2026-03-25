@@ -7,6 +7,9 @@ from server.routers.bargain import router as bargain_router
 from server.routers.chat import router as chat_router
 from server.routers.orders import router as orders_router
 from server.routers.users import router as users_router
+from server.routers.reviews import router as reviews_router
+from server.routers.wishlist import router as wishlist_router
+from server.routers.cart import router as cart_router
 import logging
 from redis import asyncio as aioredis
 from fastapi_limiter import FastAPILimiter
@@ -16,6 +19,9 @@ from server.core.config import settings
 import server.models.bargain  # noqa: F401
 import server.models.chat  # noqa: F401
 import server.models.order  # noqa: F401
+import server.models.review  # noqa: F401
+import server.models.cart  # noqa: F401
+import server.models.wishlist  # noqa: F401
 
 logging.basicConfig(level=logging.INFO)
 
@@ -50,6 +56,9 @@ app.include_router(bargain_router, prefix="/v1/bargain")
 app.include_router(chat_router, prefix="/v1/chat")
 app.include_router(orders_router, prefix="/v1/orders")
 app.include_router(users_router, prefix="/v1/users")
+app.include_router(reviews_router, prefix="/v1/reviews")
+app.include_router(wishlist_router, prefix="/v1/wishlist")
+app.include_router(cart_router, prefix="/v1/cart")
 
 from fastapi.openapi.utils import get_openapi
 
