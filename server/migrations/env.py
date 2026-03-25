@@ -19,6 +19,9 @@ from server.models.gadget import Gadget
 from server.models.bargain import BargainSession
 from server.models.chat import ChatMessage
 from server.models.order import Order, OrderItem
+from server.models.review import Review
+from server.models.wishlist import Wishlist
+from server.models.cart import Cart, CartItem
 
 target_metadata = SQLModel.metadata
 

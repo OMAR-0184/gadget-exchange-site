@@ -4,7 +4,7 @@ Welcome to the client-side API documentation! This guide outlines how frontend a
 
 ## Base URL
 - **Local Development:** `http://localhost:8000/v1`
-- **Production:** `https://your-production-url.com/v1` *(replace when deployed)*
+- **Production:** `https://labassignment-production.up.railway.app/v1`
 
 ## Authentication headers
 All protected routes (such as creating gadgets or placing orders) will absolutely require a JSON Web Token (JWT) sent in the HTTP `Authorization` header.
@@ -568,6 +568,159 @@ Get a formatted bill/invoice for a completed order.
 **Error Responses:**
 - `400 Bad Request`: Bill not available for `pending` or `cancelled` orders.
 - `403 Forbidden`: Not authorized.
+
+---
+
+## 7. Rating & Review Endpoints (`/reviews`)
+
+Allows buyers to leave reviews on gadgets they've purchased, and allows retrieving reviews for a gadget or seller.
+
+### 7.1 Create Review
+Leave a 1-5 star rating and an optional comment for a purchased gadget. The order must be marked as `delivered`.
+
+- **Endpoint:** `POST /reviews/`
+- **Auth Required:** Yes (`Bearer <token>`)
+- **Content-Type:** `application/json`
+
+**Request Body:**
+```json
+{
+  "gadget_id": "gdt_416f0378",
+  "order_id": "ord_a1b2c3d4",
+  "rating": 5,
+  "comment": "Great phone, fast delivery!"
+}
+```
+
+**Success Response (201 Created):**
+```json
+{
+  "id": "rev_abc123",
+  "reviewer_id": "usr_buyer123",
+  "reviewer_name": "John Doe",
+  "gadget_id": "gdt_416f0378",
+  "order_id": "ord_a1b2c3d4",
+  "rating": 5,
+  "comment": "Great phone, fast delivery!",
+  "created_at": "...",
+  "updated_at": "..."
+}
+```
+
+**Error Responses:**
+- `400 Bad Request`: Order is not delivered or review already exists.
+- `403 Forbidden`: You can only review your own orders.
+
+### 7.2 Get Gadget Reviews
+Fetches all reviews left by buyers for a specific gadget.
+
+- **Endpoint:** `GET /reviews/gadget/{gadget_id}?limit=20&skip=0`
+- **Auth Required:** No
+
+**Success Response (200 OK):**
+```json
+{
+  "items": [ ... ],
+  "total_count": 1
+}
+```
+
+### 7.3 Get Seller Reviews
+Fetches all reviews for gadgets sold by a specific seller.
+
+- **Endpoint:** `GET /reviews/seller/{seller_id}?limit=20&skip=0`
+- **Auth Required:** No
+
+**Success Response (200 OK):**
+```json
+{
+  "items": [ ... ],
+  "total_count": 5
+}
+```
+
+---
+
+## 8. Wishlist Endpoints (`/wishlist`)
+
+Manage a user's favorite gadgets.
+
+### 8.1 Get User Wishlist
+- **Endpoint:** `GET /wishlist/`
+- **Auth Required:** Yes (`Bearer <token>`)
+
+**Success Response (200 OK):**
+Returns a list of wishlist items containing the associated gadget details.
+
+### 8.2 Add to Wishlist
+- **Endpoint:** `POST /wishlist/{gadget_id}`
+- **Auth Required:** Yes (`Bearer <token>`)
+
+**Success Response (201 Created):** Returns the created wishlist item.
+
+### 8.3 Remove from Wishlist
+- **Endpoint:** `DELETE /wishlist/{gadget_id}`
+- **Auth Required:** Yes (`Bearer <token>`)
+
+---
+
+## 9. Shopping Cart Endpoints (`/cart`)
+
+Persistent server-side shopping cart with instantaneous checkout.
+
+### 9.1 Get Cart
+- **Endpoint:** `GET /cart/`
+- **Auth Required:** Yes (`Bearer <token>`)
+
+**Success Response (200 OK):** Returns the Cart ID, an array of cart items, and the dynamically calculated `total_amount`.
+
+### 9.2 Add Item to Cart
+- **Endpoint:** `POST /cart/items`
+- **Auth Required:** Yes (`Bearer <token>`)
+- **Content-Type:** `application/json`
+
+**Request Body:**
+```json
+{
+  "gadget_id": "gdt_416f0378",
+  "quantity": 1
+}
+```
+
+### 9.3 Update Cart Item
+- **Endpoint:** `PATCH /cart/items/{gadget_id}`
+- **Auth Required:** Yes (`Bearer <token>`)
+- **Content-Type:** `application/json`
+
+**Request Body:**
+```json
+{
+  "quantity": 2
+}
+```
+
+### 9.4 Remove Item from Cart
+- **Endpoint:** `DELETE /cart/items/{gadget_id}`
+- **Auth Required:** Yes (`Bearer <token>`)
+
+### 9.5 Checkout Cart
+Converts the cart directly into a pending Order and empties the cart.
+
+- **Endpoint:** `POST /cart/checkout`
+- **Auth Required:** Yes (`Bearer <token>`)
+- **Content-Type:** `application/json`
+
+**Request Body:**
+```json
+{
+  "shipping_address": "123 Main St",
+  "phone": "+1987654321"
+}
+```
+*(Both properties are optional if user profile already has an address)*
+
+**Success Response (201 Created):**
+Returns a complete `OrderResponse` exactly like `POST /orders/`.
 
 ---
 
