@@ -1,0 +1,123 @@
+.catalog-container {
+  max-width: 1240px;
+  margin: 0 auto;
+}
+
+.catalog-header {
+  margin-bottom: 24px;
+}
+
+.catalog-title h1 {
+  font-size: 2rem;
+  font-weight: 700;
+  margin-bottom: 8px;
+  color: var(--primary-color);
+}
+
+.catalog-title p {
+  color: var(--text-muted);
+  font-size: 1rem;
+}
+
+.catalog-filters {
+  display: flex;
+  gap: 16px;
+  padding: 0;
+  box-shadow: none;
+  border: none;
+  background: transparent;
+  flex-wrap: wrap;
+  margin-bottom: 24px;
+}
+
+.search-bar, .category-filter {
+  position: relative;
+  flex: 1;
+  min-width: 250px;
+}
+
+.search-icon, .filter-icon {
+  position: absolute;
+  top: 50%;
+  left: 16px;
+  transform: translateY(-50%);
+  color: var(--primary-color);
+  pointer-events: none;
+}
+
+.search-bar input, .category-filter select {
+  padding-left: 48px;
+  margin: 0;
+  background: #ffffff;
+  border: 2px solid var(--primary-color);
+  height: 56px; /* Fat OLX inputs */
+  border-radius: var(--radius-md);
+  font-size: 1rem;
+}
+
+.search-bar input:focus, .category-filter select:focus {
+  border-width: 3px;
+}
+
+.category-filter select {
+  appearance: none;
+  cursor: pointer;
+  font-weight: 500;
+}
+
+.gadget-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 16px;
+  margin-bottom: 32px;
+}
+
+.loading-state, .empty-state {
+  text-align: center;
+  padding: 60px 20px;
+  background: #fff;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+}
+
+.spinner {
+  animation: spin 1s linear infinite;
+  color: var(--accent-color);
+  margin-bottom: 16px;
+}
+
+@keyframes spin {
+  100% { transform: rotate(360deg); }
+}
+
+.empty-state h2 {
+  font-size: 1.5rem;
+  margin-bottom: 12px;
+  color: var(--primary-color);
+}
+
+.empty-state p {
+  color: var(--text-muted);
+  margin-bottom: 24px;
+}
+
+.load-more-container {
+  display: flex;
+  justify-content: center;
+  margin-top: 40px;
+  margin-bottom: 60px;
+}
+
+.load-more-btn {
+  padding: 14px 40px;
+  border: 2px solid var(--primary-color);
+  color: var(--primary-color);
+  background: #fff;
+  font-weight: 700;
+  border-radius: var(--radius-md);
+}
+
+.load-more-btn:hover {
+  border-width: 4px;
+  padding: 12px 38px;
+}

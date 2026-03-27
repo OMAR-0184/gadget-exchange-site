@@ -1,0 +1,258 @@
+.cart-container {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  animation: fadeIn 0.4s ease-out forwards;
+}
+
+.cart-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.cart-header h1 {
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--color-text-primary);
+  margin: 0;
+}
+
+.cart-loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 50vh;
+  gap: 16px;
+  color: var(--color-text-secondary);
+}
+
+.cart-loading .spinner {
+  animation: spin 1s linear infinite;
+  color: var(--color-primary);
+}
+
+.empty-cart {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 64px 32px;
+  text-align: center;
+}
+
+.empty-icon {
+  color: var(--color-text-tertiary);
+  margin-bottom: 24px;
+  opacity: 0.5;
+}
+
+.empty-cart h2 {
+  font-size: 1.75rem;
+  margin-bottom: 8px;
+  color: var(--color-text-secondary);
+}
+
+.empty-cart p {
+  color: var(--color-text-tertiary);
+  margin-bottom: 24px;
+}
+
+.cart-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 24px;
+}
+
+@media (min-width: 900px) {
+  .cart-grid {
+    grid-template-columns: 1fr 380px;
+  }
+}
+
+.cart-items-section {
+  padding: 0;
+  overflow: hidden;
+}
+
+.cart-item {
+  display: flex;
+  flex-direction: column;
+  border-bottom: 1px solid var(--color-border);
+  padding: 20px;
+  gap: 16px;
+  transition: background-color 0.2s;
+}
+
+.cart-item:last-child {
+  border-bottom: none;
+}
+
+.cart-item:hover {
+  background-color: var(--color-bg-hover);
+}
+
+@media (min-width: 600px) {
+  .cart-item {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+  }
+}
+
+.item-details {
+  flex: 1;
+}
+
+.item-title-link {
+  text-decoration: none;
+  color: inherit;
+}
+
+.item-title-link:hover .item-title {
+  color: var(--color-primary);
+}
+
+.item-title {
+  font-weight: 600;
+  font-size: 1.1rem;
+  margin: 0 0 8px 0;
+  transition: color 0.2s;
+}
+
+.item-price {
+  font-size: 1rem;
+  color: var(--color-text-secondary);
+}
+
+.item-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+}
+
+.quantity-controls {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background-color: var(--color-bg-elevated);
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  padding: 4px;
+}
+
+.qty-btn {
+  background: transparent;
+  color: var(--color-text-primary);
+  width: 28px;
+  height: 28px;
+  border-radius: 4px;
+}
+
+.qty-btn:hover:not(:disabled) {
+  background-color: var(--color-border);
+}
+
+.qty-btn:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+.qty-value {
+  font-weight: 600;
+  min-width: 20px;
+  text-align: center;
+}
+
+.item-subtotal {
+  font-weight: 700;
+  font-size: 1.1rem;
+  color: var(--color-text-primary);
+  min-width: 80px;
+  text-align: right;
+}
+
+.remove-btn {
+  background: transparent;
+  border: none;
+  color: #ff4757;
+  padding: 8px;
+  cursor: pointer;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+}
+
+.remove-btn:hover {
+  background-color: rgba(255, 71, 87, 0.1);
+  transform: scale(1.1);
+}
+
+.checkout-card {
+  padding: 24px;
+  position: sticky;
+  top: 24px;
+}
+
+.checkout-card h2 {
+  margin: 0 0 24px 0;
+  font-size: 1.5rem;
+}
+
+.summary-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 12px 0;
+}
+
+.total-row {
+  font-weight: 700;
+  font-size: 1.25rem;
+  border-top: 1px solid var(--color-border);
+  border-bottom: 1px solid var(--color-border);
+  margin-top: 8px;
+  margin-bottom: 16px;
+  padding: 16px 0;
+}
+
+.total-highlight {
+  color: var(--color-primary);
+}
+
+.checkout-form .form-group {
+  margin-bottom: 16px;
+}
+
+.checkout-form .form-control {
+  width: 100%;
+  padding: 10px 12px;
+  border-radius: 8px;
+  border: 1px solid var(--color-border);
+  background: var(--color-bg-input);
+  color: var(--color-text-primary);
+  transition: all 0.2s;
+  box-sizing: border-box;
+}
+
+.checkout-form .form-control:focus {
+  border-color: var(--color-primary);
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(110, 86, 207, 0.2);
+}
+
+.checkout-form label {
+  display: block;
+  font-size: 0.85rem;
+  font-weight: 500;
+  margin-bottom: 8px;
+  color: var(--color-text-secondary);
+}
+
+.help-text {
+  font-size: 0.85rem;
+  color: var(--color-text-tertiary);
+}

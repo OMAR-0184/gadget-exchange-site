@@ -1,0 +1,99 @@
+.navbar {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: var(--surface-color);
+  border-bottom: 2px solid var(--border-color);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+  border-radius: 0;
+  margin-bottom: 2rem;
+}
+
+.nav-container {
+  max-width: 1240px;
+  margin: 0 auto;
+  padding: 12px 24px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.nav-brand {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 2rem;
+  font-weight: 800;
+  color: var(--accent-color); /* Teal logo */
+  letter-spacing: -1px;
+}
+
+.brand-text {
+  color: var(--accent-color);
+}
+
+.nav-brand:hover {
+  opacity: 0.8;
+}
+
+.brand-icon {
+  color: var(--primary-color);
+}
+
+.nav-links {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.nav-btn {
+  display: flex !important;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 20px;
+  font-size: 1rem;
+}
+
+.logout-btn {
+  color: var(--danger);
+  border-color: var(--border-color);
+}
+
+.logout-btn:hover {
+  color: var(--danger);
+  border-color: var(--danger);
+  border-width: 4px;
+  padding: 8px 18px;
+}
+
+/* Multi-colored sell button OLX style */
+.btn-sell {
+  background: #ffffff;
+  color: var(--primary-color);
+  border: 4px solid transparent;
+  background-clip: padding-box;
+  position: relative;
+  border-radius: 24px;
+  padding: 8px 20px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  z-index: 1;
+}
+
+.btn-sell::before {
+  content: '';
+  position: absolute;
+  top: -4px; right: -4px; bottom: -4px; left: -4px;
+  z-index: -1;
+  border-radius: 24px;
+  background: linear-gradient(45deg, #002f34, #00a49f, #ffce32, #ff5e00);
+}
+
+.btn-sell:hover {
+  border-width: 4px;
+  padding: 8px 20px; /* retain size */
+  background: #f2f4f5;
+  background-clip: padding-box;
+}
