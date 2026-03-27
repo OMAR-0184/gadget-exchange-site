@@ -1,0 +1,119 @@
+.gadget-card {
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  transition: box-shadow 0.2s ease;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  background: #ffffff;
+  border: 1px solid var(--border-color);
+}
+
+.gadget-card:hover {
+  box-shadow: 0 4px 12px rgba(0, 47, 52, 0.1);
+}
+
+.gadget-link {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  text-decoration: none;
+}
+
+.card-image-wrapper {
+  position: relative;
+  width: 100%;
+  padding-top: 65%; /* slightly wider */
+  overflow: hidden;
+  background: var(--bg-color);
+  border-bottom: 1px solid var(--border-color);
+}
+
+.card-image {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.card-badges {
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  display: flex;
+  gap: 8px;
+}
+
+.badge {
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 0.70rem;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.condition-badge {
+  background: rgba(0, 47, 52, 0.8);
+  color: #fff;
+}
+
+.verified-badge {
+  background: #00a49f;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px;
+}
+
+.card-content {
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+}
+
+.card-price {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--primary-color);
+  margin-bottom: 8px;
+}
+
+.card-title {
+  font-size: 1rem;
+  font-weight: 400;
+  margin-bottom: 12px;
+  color: var(--primary-color);
+  line-height: 1.4;
+  flex-grow: 1;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.card-category {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  color: var(--text-muted);
+  font-size: 0.75rem;
+  font-weight: 500;
+  text-transform: capitalize;
+  margin-top: auto;
+}
+
+.card-footer {
+  margin-top: 12px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.card-date {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}

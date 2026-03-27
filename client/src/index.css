@@ -1,0 +1,122 @@
+/* Reset & Global */
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap');
+
+:root {
+  --bg-color: #f2f4f5; /* OLX standard light gray background */
+  --surface-color: #ffffff;
+  --border-color: #d8dfe0; /* Soft border */
+  --primary-color: #002f34; /* OLX intense dark blue-green */
+  --primary-hover: #001a1d;
+  --accent-color: #00a49f; /* Teal accent */
+  --text-main: #002f34;
+  --text-muted: #5c7a7d;
+  --danger: #ff5e00;
+  --success: #00a49f;
+  --radius-xl: 12px;
+  --radius-lg: 8px;
+  --radius-md: 4px;
+  --radius-sm: 4px;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: 'Roboto', Helvetica, Arial, sans-serif;
+  background-color: var(--bg-color);
+  color: var(--text-main);
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+button {
+  cursor: pointer;
+  border: none;
+  background: none;
+  font-family: inherit;
+}
+
+/* Base Form Inputs */
+input, textarea, select {
+  font-family: inherit;
+  width: 100%;
+  padding: 14px 16px;
+  background: #ffffff;
+  border: 2px solid var(--border-color);
+  border-radius: var(--radius-md);
+  color: var(--text-main);
+  transition: all 0.2s ease;
+  font-size: 1rem;
+}
+
+input:focus, textarea:focus, select:focus {
+  outline: none;
+  border-color: var(--primary-color);
+}
+
+input::placeholder, textarea::placeholder {
+  color: var(--text-muted);
+}
+
+/* Utilities */
+.glass-panel {
+  background: var(--surface-color);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
+}
+
+/* Buttons like OLX */
+.btn-primary {
+  background: var(--primary-color);
+  color: white;
+  padding: 12px 24px;
+  border-radius: var(--radius-md);
+  font-weight: 700;
+  border: 2px solid var(--primary-color);
+  transition: all 0.2s ease;
+}
+
+.btn-primary:hover {
+  background: #ffffff;
+  color: var(--primary-color);
+}
+
+.btn-primary:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+.btn-secondary {
+  background: #ffffff;
+  border: 2px solid var(--primary-color);
+  color: var(--primary-color);
+  padding: 12px 24px;
+  border-radius: var(--radius-md);
+  font-weight: 700;
+  transition: all 0.2s ease;
+}
+
+.btn-secondary:hover {
+  border-width: 4px; /* OLX characteristic thick border hover */
+  padding: 10px 22px; /* adjust padding to avoid shift */
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.4s ease forwards;
+}
