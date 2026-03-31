@@ -55,12 +55,12 @@ async def bargain_websocket(
       - {"action": "accept"}                 → accept the current offer
       - {"action": "reject"}                 → reject and close bargain
     """
+    await websocket.accept()
+
     user_id = await authenticate_ws(websocket, token)
     if not user_id:
         await websocket.close(code=4001, reason="Invalid or expired token")
         return
-
-    await websocket.accept()
 
     from server.db.session import async_session_maker
 

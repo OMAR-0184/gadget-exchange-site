@@ -60,6 +60,8 @@ async def chat_websocket(
     gadget_id: str,
     token: str = Query(...),
 ):
+    await websocket.accept()
+
     receiver_id = websocket.query_params.get("receiver_id")
     if not receiver_id:
         await websocket.close(code=4000, reason="receiver_id is required")
@@ -80,8 +82,6 @@ async def chat_websocket(
     if not user_id:
         await websocket.close(code=4001, reason="Invalid or expired token")
         return
-
-    await websocket.accept()
 
     from server.db.session import async_session_maker
 
