@@ -50,20 +50,21 @@ async def update_gadget(
 
 @router.get("/", response_model=GadgetListResponse)
 async def list_gadgets(
-    cursor: Optional[str] = Query(None, description="ISO timestamp cursor for pagination"),
+    cursor: Optional[str] = Query(None, description="Offset string for pagination"),
     limit: int = Query(20, ge=1, le=100, description="Items per page"),
-    search: Optional[str] = Query(None, description="Search by title"),
+    search: Optional[str] = Query(None, description="Search by title or description"),
     category: Optional[str] = Query(None, description="Filter by category"),
     min_price: Optional[float] = Query(None, description="Minimum price"),
     max_price: Optional[float] = Query(None, description="Maximum price"),
     condition: Optional[str] = Query(None, description="Filter by condition"),
+    sort_by: Optional[str] = Query("newest", description="Sort by relevance, price_asc, price_desc, newest"),
     current_user: Optional[User] = Depends(get_optional_current_user),
     session: AsyncSession = Depends(get_session)
 ):
     items, next_cursor, total_count = await GadgetService.get_gadgets(
         session, cursor=cursor, limit=limit, search=search,
         category=category, min_price=min_price, max_price=max_price, condition=condition,
-        current_user=current_user
+        sort_by=sort_by, current_user=current_user
     )
     return GadgetListResponse(items=items, next_cursor=next_cursor, total_count=total_count)
 
