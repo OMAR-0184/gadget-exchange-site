@@ -58,9 +58,13 @@ async def get_chat_history(
 async def chat_websocket(
     websocket: WebSocket,
     gadget_id: str,
-    token: str = Query(...),
 ):
     await websocket.accept()
+
+    token = websocket.query_params.get("token")
+    if not token:
+        await websocket.close(code=4000, reason="token is required")
+        return
 
     receiver_id = websocket.query_params.get("receiver_id")
     if not receiver_id:
