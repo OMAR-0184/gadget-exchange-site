@@ -1,5 +1,5 @@
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlmodel import select, func, col
+from sqlmodel import select, func, col, or_
 from fastapi import HTTPException
 from datetime import datetime
 from server.models.gadget import Gadget
@@ -89,14 +89,21 @@ class GadgetService:
         count_query = select(func.count()).select_from(Gadget).where(Gadget.is_active == True)
 
         if search:
-            search_vector = func.to_tsvector('english', col(Gadget.title) + ' ' + col(Gadget.description))
-            search_query = func.websearch_to_tsquery('english', search)
-            query = query.where(search_vector.op('@@')(search_query))
-            count_query = count_query.where(search_vector.op('@@')(search_query))
+            search_term = f"%{search}%"
+            search_condition = or_(
+                col(Gadget.title).ilike(search_term),
+                col(Gadget.description).ilike(search_term),
+                col(Gadget.category).ilike(search_term),
+                col(Gadget.condition).ilike(search_term)
+            )
+            query = query.where(search_condition)
+            count_query = count_query.where(search_condition)
             
             if sort_by == "relevance":
+                search_vector = func.to_tsvector('english', col(Gadget.title) + ' ' + col(Gadget.description))
+                search_query = func.plainto_tsquery('english', search)
                 rank = func.ts_rank_cd(search_vector, search_query)
-                query = query.order_by(rank.desc())
+                query = query.order_by(rank.desc(), Gadget.created_at.desc())
 
         if category:
             query = query.where(Gadget.category == category.lower())

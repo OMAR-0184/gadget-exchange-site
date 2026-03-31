@@ -92,13 +92,14 @@ Fetches a paginated list of active gadgets. Supports filtering and cursor-based 
 - **Auth Required:** Optional (Include a valid `Bearer <token>` to receive personalized `personal_price` discounts if you have accepted offer sessions).
 
 **Query Parameters:**
-- `cursor` (string, optional): ISO timestamp of the last item from the previous page.
+- `cursor` (string, optional): Offset string representing the start index for pagination.
 - `limit` (int, default: `20`): Number of items per page (max `100`).
-- `search` (string, optional): Search by gadget title.
+- `search` (string, optional): Full-text smart search by gadget title and description.
 - `category` (string, optional): e.g., `smartphones`, `laptops`, `audio`.
 - `min_price` (float, optional).
 - `max_price` (float, optional).
 - `condition` (string, optional): `new`, `like_new`, `good`, `fair`.
+- `sort_by` (string, optional, default: `newest`): Sorting method. Options: `relevance`, `price_asc`, `price_desc`, `newest`.
 
 **Success Response (200 OK):**
 ```json
@@ -120,7 +121,7 @@ Fetches a paginated list of active gadgets. Supports filtering and cursor-based 
       "updated_at": "2026-03-20T13:31:53.11Z"
     }
   ],
-  "next_cursor": "2026-03-20T13:31:53.11Z",
+  "next_cursor": "20",
   "total_count": 1
 }
 ```
