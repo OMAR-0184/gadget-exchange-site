@@ -1,4 +1,4 @@
-const API_URL = import.meta.env.VITE_API_URL || 'https://labassignment-production.up.railway.app/v1';
+export const API_URL = import.meta.env.VITE_API_URL || 'https://labassignment-production.up.railway.app/v1';
 
 /**
  * Enhanced fetch wrapper to inject tokens and handle errors uniformly

@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
+import { API_URL } from '../services/api';
 
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000/v1';
 const WS_BASE_URL = API_URL.replace(/^http/, 'ws');
 
 export function useChat(gadgetId, token, receiverId) {
