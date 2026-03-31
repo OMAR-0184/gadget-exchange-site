@@ -39,7 +39,7 @@ export default function Register() {
       >
         <div className="auth-header">
           <h2>Create Account</h2>
-          <p>Join GadgetMarket today</p>
+          <p>Join Vantage Tech today</p>
         </div>
 
         {error && (

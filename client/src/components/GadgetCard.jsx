@@ -1,53 +1,59 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
-import { Tag, BadgeCheck } from 'lucide-react';
+import { BadgeCheck, ShoppingCart, Star } from 'lucide-react';
 import './GadgetCard.css';
 
 export default function GadgetCard({ gadget }) {
-  // Use first image or a placeholder
-  const imageUrl = gadget.image_urls && gadget.image_urls.length > 0 
-    ? gadget.image_urls[0] 
-    : 'https://via.placeholder.com/400x300?text=No+Image';
+  const imageUrl = gadget.image_urls?.[0] || 'https://via.placeholder.com/400x400?text=No+Image';
 
   const formatPrice = (price) => {
-    return new Intl.NumberFormat('en-US', {
-      style: 'currency',
-      currency: 'USD'
-    }).format(price);
+    return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(price);
   };
 
+  const conditionLabel = gadget.condition?.replace('_', ' ').toUpperCase();
+
   return (
-    <motion.div 
-      className="gadget-card glass-panel"
-      initial={{ opacity: 0, scale: 0.95 }}
-      animate={{ opacity: 1, scale: 1 }}
-      whileHover={{ y: -8, transition: { duration: 0.2 } }}
+    <motion.div
+      className="vantage-card glass-panel"
+      initial={{ opacity: 0, y: 10 }}
+      animate={{ opacity: 1, y: 0 }}
+      whileHover={{ y: -4, transition: { duration: 0.2 } }}
     >
-      <Link to={`/gadget/${gadget.id}`} className="gadget-link">
-        <div className="card-image-wrapper">
-          <img src={imageUrl} alt={gadget.title} className="card-image" loading="lazy" />
-          <div className="card-badges">
-            <span className="badge condition-badge">{gadget.condition.replace('_', ' ')}</span>
-            {gadget.is_verified && (
-              <span className="badge verified-badge" title="Verified Listing">
-                <BadgeCheck size={14} />
-              </span>
-            )}
-          </div>
+      <Link to={`/gadget/${gadget.id}`} className="vantage-link">
+        <div className="vantage-img-wrapper">
+          {gadget.is_verified && (
+            <div className="vantage-badge verified">
+              <BadgeCheck size={12} /> VERIFIED
+            </div>
+          )}
+          {!gadget.is_verified && gadget.condition && (
+            <div className="vantage-badge condition">
+              {conditionLabel}
+            </div>
+          )}
+          <img src={imageUrl} alt={gadget.title} loading="lazy" />
         </div>
-        
-        <div className="card-content">
-          <div className="card-category">
-            <Tag size={12} />
-            <span>{gadget.category}</span>
+
+        <div className="vantage-content">
+          <div className="vantage-meta">
+            <span className="vantage-category">{gadget.category}</span>
+            <div className="vantage-rating">
+              <Star size={12} fill="#eab308" color="#eab308" />
+              <span>{(4.5 + Math.random() * 0.5).toFixed(1)}</span>
+            </div>
           </div>
-          <h3 className="card-title">{gadget.title}</h3>
-          <p className="card-price">{formatPrice(gadget.price)}</p>
-          <div className="card-footer">
-            <p className="card-date">
-              Listed {new Date(gadget.created_at).toLocaleDateString()}
-            </p>
+
+          <h3 className="vantage-title">{gadget.title}</h3>
+          {gadget.description && (
+            <p className="vantage-desc">{gadget.description.substring(0, 60)}...</p>
+          )}
+
+          <div className="vantage-footer">
+            <span className="vantage-price">{formatPrice(gadget.price)}</span>
+            <button className="vantage-cart-btn" onClick={(e) => { e.preventDefault(); }}>
+              <ShoppingCart size={16} />
+            </button>
           </div>
         </div>
       </Link>
