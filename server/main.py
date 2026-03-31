@@ -10,6 +10,7 @@ from server.routers.users import router as users_router
 from server.routers.reviews import router as reviews_router
 from server.routers.wishlist import router as wishlist_router
 from server.routers.cart import router as cart_router
+from server.routers.admin import router as admin_router
 import logging
 from redis import asyncio as aioredis
 from fastapi_limiter import FastAPILimiter
@@ -59,6 +60,7 @@ app.include_router(users_router, prefix="/v1/users")
 app.include_router(reviews_router, prefix="/v1/reviews")
 app.include_router(wishlist_router, prefix="/v1/wishlist")
 app.include_router(cart_router, prefix="/v1/cart")
+app.include_router(admin_router, prefix="/v1/admin")
 
 from fastapi.openapi.utils import get_openapi
 

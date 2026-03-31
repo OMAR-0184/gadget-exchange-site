@@ -18,6 +18,8 @@ class UserProfile(BaseModel):
     full_name: str
     address: Optional[str] = None
     phone: Optional[str] = None
+    is_admin: bool = False
+    is_banned: bool = False
 
 
 # ── Order Requests ──
