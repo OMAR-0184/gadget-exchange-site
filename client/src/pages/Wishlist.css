@@ -1,29 +1,31 @@
 .wishlist-container {
-  display: flex;
-  flex-direction: column;
-  gap: 24px;
+  max-width: 1200px;
+  margin: 0 auto;
 }
 
 .wishlist-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  margin-bottom: 32px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid var(--border-color);
 }
 
 .wishlist-header h1 {
   font-size: 2rem;
   font-weight: 700;
-  color: var(--color-text-primary);
-  margin: 0;
+  color: var(--primary-color);
 }
 
 .wishlist-count {
-  font-size: 1rem;
-  color: var(--color-text-secondary);
-  background: var(--color-bg-elevated);
-  padding: 6px 12px;
+  font-size: 0.9rem;
+  color: var(--text-muted);
+  background: var(--bg-color);
+  padding: 6px 14px;
   border-radius: 20px;
-  border: 1px solid var(--color-border);
+  border: 1px solid var(--border-color);
+  font-weight: 600;
 }
 
 .wishlist-loading {
@@ -33,12 +35,7 @@
   justify-content: center;
   min-height: 50vh;
   gap: 16px;
-  color: var(--color-text-secondary);
-}
-
-.wishlist-loading .spinner {
-  animation: spin 1s linear infinite;
-  color: var(--color-primary);
+  color: var(--text-muted);
 }
 
 .empty-wishlist {
@@ -48,28 +45,38 @@
   justify-content: center;
   padding: 64px 32px;
   text-align: center;
-  margin-top: 24px;
+  margin-top: 16px;
 }
 
-.empty-icon {
-  color: var(--color-text-tertiary);
+.empty-wishlist .empty-icon {
+  color: var(--border-color);
   margin-bottom: 24px;
-  opacity: 0.5;
 }
 
 .empty-wishlist h2 {
-  font-size: 1.75rem;
+  font-size: 1.5rem;
   margin-bottom: 8px;
-  color: var(--color-text-secondary);
 }
 
 .empty-wishlist p {
-  color: var(--color-text-tertiary);
+  color: var(--text-muted);
   margin-bottom: 24px;
 }
 
 .wishlist-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  grid-template-columns: repeat(4, 1fr);
   gap: 20px;
+}
+
+@media (max-width: 1000px) {
+  .wishlist-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (max-width: 700px) {
+  .wishlist-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
 }

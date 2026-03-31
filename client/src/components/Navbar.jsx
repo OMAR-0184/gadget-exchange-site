@@ -1,60 +1,50 @@
 import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
-import { Smartphone, LogOut, PlusCircle, ShoppingCart, Heart } from 'lucide-react';
+import { Search, Bell, Heart, ShoppingCart, User } from 'lucide-react';
 import './Navbar.css';
 
 const Navbar = () => {
-  const { token, logout } = useAuth();
+  const { token, user, logout } = useAuth();
   const navigate = useNavigate();
 
-  const handleLogout = () => {
-    logout();
-    navigate('/');
-  };
-
   return (
-    <nav className="navbar glass-panel">
+    <nav className="navbar">
       <div className="nav-container">
-        <Link to="/" className="nav-brand">
-          <Smartphone size={28} className="brand-icon" />
-          <span className="brand-text">GadgetMarket</span>
-        </Link>
-        
-        <div className="nav-links">
+        <div className="nav-left">
+          <Link to="/" className="nav-brand">Vantage Tech</Link>
+          <div className="nav-links-text">
+            <Link to="/">Browse</Link>
+            <Link to="/dashboard">Deals</Link>
+            <Link to="/">Categories</Link>
+          </div>
+        </div>
+
+        <div className="nav-right">
+          <div className="nav-search">
+            <Search size={16} className="search-icon" />
+            <input type="text" placeholder="Search tech..." />
+          </div>
+
           {token ? (
-            <>
-              <Link to="/dashboard" className="btn-secondary nav-btn">
-                <span>Dashboard</span>
+            <div className="nav-icons">
+              <button className="icon-btn"><Bell size={20} /></button>
+              <Link to="/wishlist" className="icon-btn"><Heart size={20} /></Link>
+              <Link to="/cart" className="icon-btn cart-icon-link">
+                <ShoppingCart size={20} />
+                <span className="cart-label">Cart</span>
               </Link>
-              <Link to="/orders" className="btn-secondary nav-btn">
-                <span>Orders</span>
+              <Link to="/profile" className="profile-btn">
+                <div className="avatar">
+                  <User size={18} />
+                </div>
               </Link>
-              <Link to="/profile" className="btn-secondary nav-btn">
-                <span>Profile</span>
-              </Link>
-              <Link to="/wishlist" className="btn-secondary nav-btn">
-                <Heart size={18} />
-                <span>Wishlist</span>
-              </Link>
-              <Link to="/cart" className="btn-secondary nav-btn">
-                <ShoppingCart size={18} />
-                <span>Cart</span>
-              </Link>
-              <Link to="/create-listing" className="btn-sell nav-btn">
-                <PlusCircle size={18} />
-                <span>SELL</span>
-              </Link>
-              <button onClick={handleLogout} className="btn-secondary nav-btn logout-btn">
-                <LogOut size={18} />
-                <span>Logout</span>
-              </button>
-            </>
+            </div>
           ) : (
-            <>
-              <Link to="/login" className="btn-secondary nav-btn">Login</Link>
-              <Link to="/register" className="btn-primary nav-btn">Sign Up</Link>
-            </>
+            <div className="nav-auth">
+              <Link to="/login" className="btn-secondary">Login</Link>
+              <Link to="/register" className="btn-primary">Sign Up</Link>
+            </div>
           )}
         </div>
       </div>

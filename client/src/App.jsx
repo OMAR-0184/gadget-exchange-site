@@ -2,6 +2,7 @@ import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
 import Navbar from './components/Navbar';
+import Footer from './components/Footer';
 import Catalog from './pages/Catalog';
 import Login from './pages/Login';
 import Register from './pages/Register';
@@ -27,87 +28,90 @@ const PrivateRoute = ({ children }) => {
 function AppRoutes() {
   return (
     <Router>
-      <Navbar />
-      <main className="main-content" style={{ padding: '24px', maxWidth: '1200px', margin: '0 auto' }}>
-        <Routes>
-          <Route path="/" element={<Catalog />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/register" element={<Register />} />
-          <Route path="/gadget/:id" element={<GadgetDetail />} />
-          <Route 
-            path="/create-listing" 
-            element={
-              <PrivateRoute>
-                <CreateListing />
-              </PrivateRoute>
-            } 
-          />
-          <Route 
-            path="/gadget/:id/bargain" 
-            element={
-              <PrivateRoute>
-                <Bargain />
-              </PrivateRoute>
-            } 
-          />
-          <Route 
-            path="/gadget/:id/chat" 
-            element={
-              <PrivateRoute>
-                <Chat />
-              </PrivateRoute>
-            } 
-          />
-          <Route 
-            path="/dashboard" 
-            element={
-              <PrivateRoute>
-                <Dashboard />
-              </PrivateRoute>
-            } 
-          />
-          <Route 
-            path="/profile" 
-            element={
-              <PrivateRoute>
-                <Profile />
-              </PrivateRoute>
-            } 
-          />
-          <Route 
-            path="/orders" 
-            element={
-              <PrivateRoute>
-                <Orders />
-              </PrivateRoute>
-            } 
-          />
-          <Route 
-            path="/order/:id" 
-            element={
-              <PrivateRoute>
-                <OrderDetail />
-              </PrivateRoute>
-            } 
-          />
-          <Route 
-            path="/cart" 
-            element={
-              <PrivateRoute>
-                <Cart />
-              </PrivateRoute>
-            } 
-          />
-          <Route 
-            path="/wishlist" 
-            element={
-              <PrivateRoute>
-                <Wishlist />
-              </PrivateRoute>
-            } 
-          />
-        </Routes>
-      </main>
+      <div className="app-wrapper">
+        <Navbar />
+        <main className="main-content">
+          <Routes>
+            <Route path="/" element={<Catalog />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/register" element={<Register />} />
+            <Route path="/gadget/:id" element={<GadgetDetail />} />
+            <Route 
+              path="/create-listing" 
+              element={
+                <PrivateRoute>
+                  <CreateListing />
+                </PrivateRoute>
+              } 
+            />
+            <Route 
+              path="/gadget/:id/bargain" 
+              element={
+                <PrivateRoute>
+                  <Bargain />
+                </PrivateRoute>
+              } 
+            />
+            <Route 
+              path="/gadget/:id/chat" 
+              element={
+                <PrivateRoute>
+                  <Chat />
+                </PrivateRoute>
+              } 
+            />
+            <Route 
+              path="/dashboard" 
+              element={
+                <PrivateRoute>
+                  <Dashboard />
+                </PrivateRoute>
+              } 
+            />
+            <Route 
+              path="/profile" 
+              element={
+                <PrivateRoute>
+                  <Profile />
+                </PrivateRoute>
+              } 
+            />
+            <Route 
+              path="/orders" 
+              element={
+                <PrivateRoute>
+                  <Orders />
+                </PrivateRoute>
+              } 
+            />
+            <Route 
+              path="/order/:id" 
+              element={
+                <PrivateRoute>
+                  <OrderDetail />
+                </PrivateRoute>
+              } 
+            />
+            <Route 
+              path="/cart" 
+              element={
+                <PrivateRoute>
+                  <Cart />
+                </PrivateRoute>
+              } 
+            />
+            <Route 
+              path="/wishlist" 
+              element={
+                <PrivateRoute>
+                  <Wishlist />
+                </PrivateRoute>
+              } 
+            />
+          </Routes>
+        </main>
+        <Footer />
+      </div>
     </Router>
   );
 }
