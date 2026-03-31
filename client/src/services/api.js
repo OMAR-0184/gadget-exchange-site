@@ -136,7 +136,8 @@ export const OrdersAPI = {
 export const ReviewsAPI = {
   create: (data) => fetchApi('/reviews/', { method: 'POST', body: JSON.stringify(data) }),
   getGadgetReviews: (gadgetId, limit = 20, skip = 0) => fetchApi(`/reviews/gadget/${gadgetId}?limit=${limit}&skip=${skip}`),
-  getSellerReviews: (sellerId, limit = 20, skip = 0) => fetchApi(`/reviews/seller/${sellerId}?limit=${limit}&skip=${skip}`)
+  getSellerReviews: (sellerId, limit = 20, skip = 0) => fetchApi(`/reviews/seller/${sellerId}?limit=${limit}&skip=${skip}`),
+  getOrderReviews: (orderId) => fetchApi(`/reviews/order/${orderId}`)
 };
 
 export const WishlistAPI = {

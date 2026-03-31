@@ -33,6 +33,14 @@ export default function OrderDetail() {
     try {
       const data = await OrdersAPI.getOne(id);
       setOrder(data);
+      
+      try {
+        const revs = await ReviewsAPI.getOrderReviews(id);
+        const reviewedGadgetIds = revs.items.map(r => r.gadget_id);
+        setReviewedItems(reviewedGadgetIds);
+      } catch (err) {
+        console.error('Failed to fetch reviews for order', err);
+      }
     } catch (err) {
       setError(err.message || 'Failed to load order.');
     } finally {
