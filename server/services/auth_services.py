@@ -22,7 +22,7 @@ class AuthService:
         await session.commit()
         await session.refresh(new_user)
         
-        access_token = create_access_token(data={"sub": new_user.id})
+        access_token = create_access_token(data={"sub": new_user.id, "is_admin": new_user.is_admin})
         return new_user, access_token
 
     @staticmethod
@@ -32,5 +32,8 @@ class AuthService:
         user = result.scalar_one_or_none()
         if not user or not verify_password(user_in.password, user.hashed_password):
             raise HTTPException(status_code=401, detail="Incorrect email or password")
+        if user.is_banned:
+            raise HTTPException(status_code=403, detail="Your account has been suspended")
             
-        return create_access_token(data={"sub": user.id})
+        return create_access_token(data={"sub": user.id, "is_admin": user.is_admin})
+

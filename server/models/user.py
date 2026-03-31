@@ -9,3 +9,5 @@ class User(SQLModel, table=True):
     full_name: str
     address: Optional[str] = Field(default=None)
     phone: Optional[str] = Field(default=None)
+    is_admin: bool = Field(default=False)
+    is_banned: bool = Field(default=False)
