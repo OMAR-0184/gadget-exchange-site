@@ -16,14 +16,14 @@ async def create_gadget(
     category: str = Form(...),
     price: float = Form(...),
     condition: str = Form("good"),
-    images: list[UploadFile] = File(description="Product images (max 5MB each)"),
+    images: Optional[list[UploadFile]] = File(None, description="Product images (max 5MB each)"),
     current_user: User = Depends(get_current_user),
     session: AsyncSession = Depends(get_session)
 ):
     # Upload images to Cloudinary if provided
     image_urls = []
     # Filter out empty uploads that Swagger sends when no files are selected
-    real_files = [f for f in images if f.filename and f.size and f.size > 0]
+    real_files = [f for f in images if f.filename and f.size and f.size > 0] if images else []
     if real_files:
         image_urls = await CloudinaryService.upload_images(real_files)
 

@@ -30,7 +30,6 @@ class OrderService:
     async def place_order(
         order_in: PlaceOrderRequest, buyer: User, session: AsyncSession
     ) -> Order:
-        # Resolve shipping address
         address = order_in.shipping_address or buyer.address
         phone = order_in.phone or buyer.phone
         if not address:
@@ -47,11 +46,9 @@ class OrderService:
         if not order_in.items:
             raise HTTPException(status_code=400, detail="Order must contain at least one item.")
 
-        # ── Lock gadgets & validate stock ──
         gadget_ids = [item.gadget_id for item in order_in.items]
         qty_map = {item.gadget_id: item.quantity for item in order_in.items}
 
-        # Pessimistic lock: SELECT … FOR UPDATE (sorted to avoid deadlocks)
         lock_query = (
             select(Gadget)
             .where(Gadget.id.in_(sorted(gadget_ids)))
@@ -60,7 +57,7 @@ class OrderService:
         result = await session.execute(lock_query)
         gadgets = {g.id: g for g in result.scalars().all()}
 
-        # Validate all gadgets exist and are active
+
         for gid in gadget_ids:
             if gid not in gadgets:
                 raise HTTPException(status_code=404, detail=f"Gadget {gid} not found.")
@@ -154,7 +151,6 @@ class OrderService:
             orders = orders[:limit]
             next_cursor = orders[-1].created_at.isoformat()
 
-        # Attach items to each order
         order_responses = []
         for order in orders:
             items_result = await session.execute(
@@ -163,7 +159,6 @@ class OrderService:
             items = list(items_result.scalars().all())
             resp = OrderResponse.model_validate(order)
             resp.items = [OrderItemResponse.model_validate(i) for i in items]
-            # Hide verification code in list view
             resp.delivery_verification_code = None
             order_responses.append(resp)
 
@@ -176,7 +171,6 @@ class OrderService:
         if not order:
             raise HTTPException(status_code=404, detail="Order not found.")
 
-        # Only buyer or sellers of the items can view
         items_result = await session.execute(
             select(OrderItem).where(OrderItem.order_id == order.id)
         )
@@ -189,7 +183,6 @@ class OrderService:
         resp = OrderResponse.model_validate(order)
         resp.items = [OrderItemResponse.model_validate(i) for i in items]
 
-        # Only show verification code to the buyer
         if order.buyer_id != user.id:
             resp.delivery_verification_code = None
 
@@ -247,7 +240,6 @@ class OrderService:
         if not order:
             raise HTTPException(status_code=404, detail="Order not found.")
 
-        # Verify the seller owns at least one item in this order
         items_result = await session.execute(
             select(OrderItem).where(OrderItem.order_id == order.id)
         )
@@ -272,7 +264,7 @@ class OrderService:
 
         resp = OrderResponse.model_validate(order)
         resp.items = [OrderItemResponse.model_validate(i) for i in items]
-        resp.delivery_verification_code = None  # don't reveal to seller
+        resp.delivery_verification_code = None  
         return resp
 
     @staticmethod
@@ -336,7 +328,6 @@ class OrderService:
                 detail=f"Bill is not available for orders with status '{order.status}'.",
             )
 
-        # Get buyer name
         buyer_result = await session.execute(select(User).where(User.id == order.buyer_id))
         buyer = buyer_result.scalar_one_or_none()
 
