@@ -42,7 +42,6 @@ async def get_bargain_sessions(
 async def bargain_websocket(
     websocket: WebSocket,
     gadget_id: str,
-    token: str = Query(...),
 ):
     """
     WebSocket for real-time price bargaining.
@@ -56,6 +55,11 @@ async def bargain_websocket(
       - {"action": "reject"}                 → reject and close bargain
     """
     await websocket.accept()
+
+    token = websocket.query_params.get("token")
+    if not token:
+        await websocket.close(code=4000, reason="token is required")
+        return
 
     user_id = await authenticate_ws(websocket, token)
     if not user_id:
