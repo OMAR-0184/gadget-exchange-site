@@ -16,6 +16,7 @@ import Orders from './pages/Orders';
 import OrderDetail from './pages/OrderDetail';
 import Cart from './pages/Cart';
 import Wishlist from './pages/Wishlist';
+import AdminDashboard from './pages/AdminDashboard';
 import './App.css';
 
 const PrivateRoute = ({ children }) => {
@@ -23,6 +24,15 @@ const PrivateRoute = ({ children }) => {
   
   if (loading) return <div>Loading...</div>;
   return token ? children : <Navigate to="/login" />;
+};
+
+const AdminRoute = ({ children }) => {
+  const { token, user, loading } = useAuth();
+  
+  if (loading) return <div>Loading...</div>;
+  if (!token) return <Navigate to="/login" />;
+  if (!user?.is_admin) return <Navigate to="/" />;
+  return children;
 };
 
 function AppRoutes() {
@@ -106,6 +116,14 @@ function AppRoutes() {
                 <PrivateRoute>
                   <Wishlist />
                 </PrivateRoute>
+              } 
+            />
+            <Route 
+              path="/admin" 
+              element={
+                <AdminRoute>
+                  <AdminDashboard />
+                </AdminRoute>
               } 
             />
           </Routes>

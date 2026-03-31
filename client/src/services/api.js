@@ -153,3 +153,53 @@ export const CartAPI = {
   removeItem: (gadgetId) => fetchApi(`/cart/items/${gadgetId}`, { method: 'DELETE' }),
   checkout: (data) => fetchApi('/cart/checkout', { method: 'POST', body: JSON.stringify(data) })
 };
+
+export const AdminAPI = {
+  getStats: () => fetchApi('/admin/stats'),
+  
+  // Users
+  getUsers: (params = {}) => {
+    const urlParams = new URLSearchParams();
+    Object.keys(params).forEach(key => {
+      if (params[key] !== undefined && params[key] !== null) urlParams.append(key, params[key]);
+    });
+    const qs = urlParams.toString();
+    return fetchApi(qs ? `/admin/users?${qs}` : '/admin/users');
+  },
+  toggleAdmin: (userId) => fetchApi(`/admin/users/${userId}/toggle-admin`, { method: 'PATCH' }),
+  toggleBan: (userId) => fetchApi(`/admin/users/${userId}/ban`, { method: 'PATCH' }),
+  
+  // Gadgets
+  getGadgets: (params = {}) => {
+    const urlParams = new URLSearchParams();
+    Object.keys(params).forEach(key => {
+      if (params[key] !== undefined && params[key] !== null) urlParams.append(key, params[key]);
+    });
+    const qs = urlParams.toString();
+    return fetchApi(qs ? `/admin/gadgets?${qs}` : '/admin/gadgets');
+  },
+  deleteGadget: (gadgetId) => fetchApi(`/admin/gadgets/${gadgetId}`, { method: 'DELETE' }),
+  toggleVerify: (gadgetId) => fetchApi(`/admin/gadgets/${gadgetId}/verify`, { method: 'PATCH' }),
+  
+  // Orders
+  getOrders: (params = {}) => {
+    const urlParams = new URLSearchParams();
+    Object.keys(params).forEach(key => {
+      if (params[key] !== undefined && params[key] !== null) urlParams.append(key, params[key]);
+    });
+    const qs = urlParams.toString();
+    return fetchApi(qs ? `/admin/orders?${qs}` : '/admin/orders');
+  },
+  updateOrderStatus: (orderId, status) => fetchApi(`/admin/orders/${orderId}/status`, { method: 'PATCH', body: JSON.stringify({ status }) }),
+  
+  // Reviews
+  getReviews: (params = {}) => {
+    const urlParams = new URLSearchParams();
+    Object.keys(params).forEach(key => {
+      if (params[key] !== undefined && params[key] !== null) urlParams.append(key, params[key]);
+    });
+    const qs = urlParams.toString();
+    return fetchApi(qs ? `/admin/reviews?${qs}` : '/admin/reviews');
+  },
+  deleteReview: (reviewId) => fetchApi(`/admin/reviews/${reviewId}`, { method: 'DELETE' }),
+};
