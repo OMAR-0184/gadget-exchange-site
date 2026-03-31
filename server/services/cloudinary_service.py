@@ -26,7 +26,6 @@ class CloudinaryService:
 
         urls = []
         for file in files:
-            # Validate file type
             if not file.content_type or not file.content_type.startswith("image/"):
                 raise HTTPException(
                     status_code=400,
@@ -34,7 +33,6 @@ class CloudinaryService:
                 )
 
             contents = await file.read()
-            # 5MB limit per image
             if len(contents) > 5 * 1024 * 1024:
                 raise HTTPException(status_code=400, detail=f"File '{file.filename}' exceeds 5MB limit")
 

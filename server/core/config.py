@@ -5,18 +5,18 @@ class Settings(BaseSettings):
     API_V1_STR: str = "/v1"
     SECRET_KEY: str
     ALGORITHM: str = "HS256"
-    ACCESS_TOKEN_EXPIRE_MINUTES: int = 60 * 24 * 7  # 7 days
+    ACCESS_TOKEN_EXPIRE_MINUTES: int = 60 * 24 * 7
 
-    # Async Postgres connection string
-    # e.g., postgresql+asyncpg://user:password@localhost/dbname
     DATABASE_URL: str
     REDIS_URL: str
 
-    # Cloudinary
     CLOUDINARY_CLOUD_NAME: str = ""
     CLOUDINARY_API_KEY: str = ""
     CLOUDINARY_API_SECRET: str = ""
 
-    model_config = SettingsConfigDict(env_file=".env", extra="ignore")
+    model_config = SettingsConfigDict(
+        env_file=(".env", "server/.env", "../.env"),
+        extra="ignore"
+    )
 
 settings = Settings()

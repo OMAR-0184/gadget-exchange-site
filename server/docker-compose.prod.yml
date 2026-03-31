@@ -7,7 +7,6 @@ services:
     ports:
       - "8000:8000"
     environment:
-      # Connect to the local pgbouncer container internally
       - DATABASE_URL=postgresql+asyncpg://${POSTGRES_USER}:${POSTGRES_PASSWORD}@pgbouncer:5432/${POSTGRES_DB}
       - REDIS_URL=redis://redis:6379/0
       - SECRET_KEY=${SECRET_KEY}
