@@ -82,14 +82,22 @@ class GadgetService:
         min_price: float | None = None,
         max_price: float | None = None,
         condition: str | None = None,
+        sort_by: str = "newest",
         current_user: User | None = None,
     ) -> tuple[list[Gadget], str | None, int]:
         query = select(Gadget).where(Gadget.is_active == True)
         count_query = select(func.count()).select_from(Gadget).where(Gadget.is_active == True)
 
         if search:
-            query = query.where(col(Gadget.title).ilike(f"%{search}%"))
-            count_query = count_query.where(col(Gadget.title).ilike(f"%{search}%"))
+            search_vector = func.to_tsvector('english', col(Gadget.title) + ' ' + col(Gadget.description))
+            search_query = func.websearch_to_tsquery('english', search)
+            query = query.where(search_vector.op('@@')(search_query))
+            count_query = count_query.where(search_vector.op('@@')(search_query))
+            
+            if sort_by == "relevance":
+                rank = func.ts_rank_cd(search_vector, search_query)
+                query = query.order_by(rank.desc())
+
         if category:
             query = query.where(Gadget.category == category.lower())
             count_query = count_query.where(Gadget.category == category.lower())
@@ -103,11 +111,15 @@ class GadgetService:
             query = query.where(Gadget.condition == condition)
             count_query = count_query.where(Gadget.condition == condition)
 
-        if cursor:
-            cursor_dt = datetime.fromisoformat(cursor)
-            query = query.where(Gadget.created_at < cursor_dt)
+        if sort_by == "price_asc":
+            query = query.order_by(Gadget.price.asc())
+        elif sort_by == "price_desc":
+            query = query.order_by(Gadget.price.desc())
+        elif sort_by == "newest" or (sort_by == "relevance" and not search):
+            query = query.order_by(Gadget.created_at.desc())
 
-        query = query.order_by(Gadget.created_at.desc()).limit(limit + 1)
+        offset = int(cursor) if cursor and cursor.isdigit() else 0
+        query = query.offset(offset).limit(limit + 1)
 
         result = await session.execute(query)
         gadgets = list(result.scalars().all())
@@ -118,7 +130,7 @@ class GadgetService:
         next_cursor = None
         if len(gadgets) > limit:
             gadgets = gadgets[:limit]
-            next_cursor = gadgets[-1].created_at.isoformat()
+            next_cursor = str(offset + limit)
 
         # Inject personal_price and convert to dict
         result_items = []

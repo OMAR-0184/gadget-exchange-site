@@ -12,6 +12,10 @@ export default function Catalog() {
   
   const [search, setSearch] = useState('');
   const [category, setCategory] = useState('');
+  const [minPrice, setMinPrice] = useState('');
+  const [maxPrice, setMaxPrice] = useState('');
+  const [condition, setCondition] = useState('');
+  const [sortBy, setSortBy] = useState('newest');
   
   const categories = ['smartphones', 'laptops', 'audio', 'tablets', 'gaming', 'other'];
 
@@ -24,6 +28,10 @@ export default function Catalog() {
         limit: 12,
         search: search || undefined,
         category: category || undefined,
+        min_price: minPrice || undefined,
+        max_price: maxPrice || undefined,
+        condition: condition || undefined,
+        sort_by: sortBy || undefined,
         cursor: cursor || undefined
       };
       
@@ -49,7 +57,7 @@ export default function Catalog() {
       fetchGadgets(null, false);
     }, 400);
     return () => clearTimeout(timer);
-  }, [search, category]);
+  }, [search, category, minPrice, maxPrice, condition, sortBy]);
 
   const handleLoadMore = () => {
     if (nextCursor && !loadingMore) {
@@ -83,6 +91,38 @@ export default function Catalog() {
               {categories.map(c => (
                 <option key={c} value={c}>{c.charAt(0).toUpperCase() + c.slice(1)}</option>
               ))}
+            </select>
+          </div>
+        </div>
+        
+        <div className="advanced-filters glass-panel">
+          <div className="filter-group">
+            <label>Sort By</label>
+            <select value={sortBy} onChange={(e) => setSortBy(e.target.value)}>
+              <option value="relevance">Relevance</option>
+              <option value="newest">Newest Arrivals</option>
+              <option value="price_asc">Price: Low to High</option>
+              <option value="price_desc">Price: High to Low</option>
+            </select>
+          </div>
+          
+          <div className="filter-group price-group">
+            <label>Price Range</label>
+            <div className="price-inputs">
+              <input type="number" placeholder="Min $" value={minPrice} onChange={(e) => setMinPrice(e.target.value)} min="0" />
+              <span>-</span>
+              <input type="number" placeholder="Max $" value={maxPrice} onChange={(e) => setMaxPrice(e.target.value)} min="0" />
+            </div>
+          </div>
+          
+          <div className="filter-group">
+            <label>Condition</label>
+            <select value={condition} onChange={(e) => setCondition(e.target.value)}>
+              <option value="">Any Condition</option>
+              <option value="new">Brand New</option>
+              <option value="like_new">Like New</option>
+              <option value="good">Good</option>
+              <option value="fair">Fair</option>
             </select>
           </div>
         </div>

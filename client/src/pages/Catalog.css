@@ -121,3 +121,57 @@
   border-width: 4px;
   padding: 12px 38px;
 }
+
+.advanced-filters {
+  display: flex;
+  gap: 16px;
+  padding: 16px 20px;
+  background: #ffffff;
+  border-radius: var(--radius-md);
+  margin-top: -12px;
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+  border: 1px solid var(--border-color);
+  box-shadow: var(--shadow-sm);
+}
+
+.filter-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  flex: 1;
+  min-width: 180px;
+}
+
+.filter-group label {
+  font-weight: 600;
+  color: var(--text-color);
+  font-size: 0.9rem;
+}
+
+.filter-group select,
+.filter-group input {
+  padding: 10px 12px;
+  border: 2px solid var(--border-color);
+  border-radius: var(--radius-sm);
+  background: #f8f9fa;
+  font-size: 0.95rem;
+  transition: border-color 0.2s;
+}
+
+.filter-group select:focus,
+.filter-group input:focus {
+  border-color: var(--primary-color);
+  outline: none;
+  background: #fff;
+}
+
+.price-inputs {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.price-inputs input {
+  width: 100%;
+}
