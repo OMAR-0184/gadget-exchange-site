@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
-import { Search, Bell, Heart, ShoppingCart, User } from 'lucide-react';
+import { Search, Bell, Heart, ShoppingCart, User, Shield } from 'lucide-react';
 import './Navbar.css';
 
 const Navbar = () => {
@@ -17,6 +17,12 @@ const Navbar = () => {
             <Link to="/">Browse</Link>
             <Link to="/dashboard">Deals</Link>
             <Link to="/">Categories</Link>
+            {user?.is_admin && (
+              <Link to="/admin" style={{ display: 'flex', alignItems: 'center', gap: '4px', color: '#8b5cf6', fontWeight: 600 }}>
+                <Shield size={14} />
+                Admin
+              </Link>
+            )}
           </div>
         </div>
 
