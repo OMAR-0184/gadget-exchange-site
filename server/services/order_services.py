@@ -126,13 +126,26 @@ class OrderService:
 
     @staticmethod
     async def get_user_orders(
-        buyer: User,
+        user: User,
         session: AsyncSession,
         cursor: str | None = None,
         limit: int = 20,
     ):
-        query = select(Order).where(Order.buyer_id == buyer.id)
-        count_query = select(func.count()).select_from(Order).where(Order.buyer_id == buyer.id)
+        seller_order_ids = (
+            select(OrderItem.order_id)
+            .where(OrderItem.seller_id == user.id)
+            .distinct()
+        )
+        order_filter = (
+            (Order.buyer_id == user.id)
+            | (Order.id.in_(seller_order_ids))
+        )
+
+        query = select(Order).where(order_filter)
+        count_query = (
+            select(func.count())
+            .select_from(select(Order.id).where(order_filter).distinct().subquery())
+        )
 
         if cursor:
             cursor_dt = datetime.fromisoformat(cursor)
