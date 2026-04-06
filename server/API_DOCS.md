@@ -499,7 +499,7 @@ Cancel a pending or confirmed order. Stock is restored to the gadgets.
 ---
 
 ### 6.5 Update Order Status (Seller)
-Allows a seller to advance the order through the fulfillment pipeline.
+Allows a seller to advance the order through the fulfillment pipeline until the package is shipped.
 
 - **Endpoint:** `PATCH /orders/{order_id}/status`
 - **Auth Required:** Yes (`Bearer <token>`)
@@ -510,7 +510,9 @@ Allows a seller to advance the order through the fulfillment pipeline.
 { "status": "confirmed" }
 ```
 
-**Valid transitions:** `pending` → `confirmed` → `shipped` → `delivered`
+**Valid transitions:** `pending` → `confirmed` → `shipped`
+
+The final `delivered` status is set when the buyer enters the delivery OTP on the website.
 
 **Error Responses:**
 - `400 Bad Request`: Invalid status transition.
@@ -519,7 +521,7 @@ Allows a seller to advance the order through the fulfillment pipeline.
 ---
 
 ### 6.6 Verify Delivery
-The buyer shares their 6-digit verification code with the delivery person. Either party can submit it to confirm delivery.
+The buyer shares their 6-digit verification code with the delivery person, then enters that OTP on the website to confirm delivery and complete the order.
 
 - **Endpoint:** `POST /orders/{order_id}/verify-delivery`
 - **Auth Required:** Yes (`Bearer <token>`)
@@ -533,7 +535,8 @@ The buyer shares their 6-digit verification code with the delivery person. Eithe
 **Success Response (200 OK):** Returns updated order with `status: "delivered"` and `verified_at` timestamp.
 
 **Error Responses:**
-- `400 Bad Request`: Invalid code, already verified, or cancelled order.
+- `400 Bad Request`: Invalid code, already verified, not yet shipped, or cancelled order.
+- `403 Forbidden`: Only the buyer can verify delivery.
 
 ---
 
@@ -761,4 +764,3 @@ async function loginUser(email, password) {
   }
 }
 ```
-

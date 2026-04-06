@@ -20,7 +20,7 @@ from server.schemas.order import (
 VALID_STATUS_TRANSITIONS = {
     "pending": {"confirmed", "cancelled"},
     "confirmed": {"shipped", "cancelled"},
-    "shipped": {"delivered"},
+    "shipped": set(),
 }
 
 
@@ -280,15 +280,25 @@ class OrderService:
             select(OrderItem).where(OrderItem.order_id == order.id)
         )
         items = list(items_result.scalars().all())
-        seller_ids = {i.seller_id for i in items}
-
-        if order.buyer_id != user.id and user.id not in seller_ids:
-            raise HTTPException(status_code=403, detail="Not authorized.")
+        if order.buyer_id != user.id:
+            raise HTTPException(
+                status_code=403,
+                detail="Only the buyer can verify delivery for this order.",
+            )
 
         if order.verified_at:
             raise HTTPException(status_code=400, detail="Delivery already verified.")
         if order.status == "cancelled":
             raise HTTPException(status_code=400, detail="Cannot verify a cancelled order.")
+        if order.status != "shipped":
+            raise HTTPException(
+                status_code=400,
+                detail="Delivery OTP can only be verified after the order has been shipped.",
+            )
+
+        code = code.strip()
+        if len(code) != 6 or not code.isdigit():
+            raise HTTPException(status_code=400, detail="Verification code must be a 6-digit number.")
 
         if code != order.delivery_verification_code:
             raise HTTPException(status_code=400, detail="Invalid verification code.")

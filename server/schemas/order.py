@@ -36,7 +36,7 @@ class PlaceOrderRequest(BaseModel):
 
 
 class UpdateOrderStatusRequest(BaseModel):
-    status: str  # confirmed, shipped, delivered
+    status: str  # confirmed, shipped
 
 
 class VerifyDeliveryRequest(BaseModel):
