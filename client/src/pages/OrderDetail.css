@@ -264,6 +264,16 @@
   letter-spacing: 0.1em;
 }
 
+.verification-message {
+  margin-top: 10px;
+  font-size: 0.85rem;
+  color: #ef4444;
+}
+
+.verification-message.success {
+  color: #10b981;
+}
+
 .delivered-success-msg {
   display: flex;
   flex-direction: column;

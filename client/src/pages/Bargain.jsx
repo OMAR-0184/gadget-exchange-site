@@ -1,15 +1,14 @@
 import React, { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
-import { useAuth } from '../contexts/AuthContext';
+import { useParams } from 'react-router-dom';
+import { useAuth } from '../contexts/auth-context';
 import { useBargain } from '../hooks/useBargain';
 import { GadgetAPI, BargainAPI } from '../services/api';
 import { DollarSign, CheckCircle, XCircle, ArrowRight, User } from 'lucide-react';
-import { motion } from 'framer-motion';
+import { motion as Motion } from 'framer-motion';
 import './Bargain.css';
 
 export default function Bargain() {
   const { id } = useParams();
-  const navigate = useNavigate();
   const { token, user } = useAuth();
   
   const [gadget, setGadget] = useState(null);
@@ -35,9 +34,7 @@ export default function Bargain() {
     if (isSeller) {
       BargainAPI.getSessions(id).then(data => {
         setSessions(data || []);
-        if (data && data.length > 0 && !selectedBargainId) {
-          setSelectedBargainId(data[0].id);
-        }
+        setSelectedBargainId(prev => prev || data?.[0]?.id || null);
       });
     }
   }, [isSeller, id]);
@@ -143,7 +140,7 @@ export default function Bargain() {
               </div>
             ) : (
               displayMessages.map((msg, i) => (
-                <motion.div 
+                <Motion.div 
                   key={i} 
                   initial={{ opacity: 0, x: -10 }} 
                   animate={{ opacity: 1, x: 0 }}
@@ -166,7 +163,7 @@ export default function Bargain() {
                       <span>Deal Accepted at ${msg.final_price}!</span>
                     </div>
                   )}
-                </motion.div>
+                </Motion.div>
               ))
             )}
           </div>

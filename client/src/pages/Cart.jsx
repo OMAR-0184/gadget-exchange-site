@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { CartAPI } from '../services/api';
-import { useAuth } from '../contexts/AuthContext';
+import { useAuth } from '../contexts/auth-context';
 import { ShoppingCart, Trash2, Plus, Minus, ArrowRight, CreditCard, Truck, Phone, Shield, CheckCircle } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import './Cart.css';

@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { GadgetAPI, OrdersAPI, CartAPI, WishlistAPI, ReviewsAPI } from '../services/api';
-import { useAuth } from '../contexts/AuthContext';
+import { useAuth } from '../contexts/auth-context';
 import { BadgeCheck, MessageSquare, DollarSign, Tag, ShoppingCart, X, Heart, Star } from 'lucide-react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion as Motion, AnimatePresence } from 'framer-motion';
 import './GadgetDetail.css';
 
 export default function GadgetDetail() {
@@ -51,7 +51,7 @@ export default function GadgetDetail() {
             console.error('Failed to check wishlist', e);
           }
         }
-      } catch (err) {
+      } catch {
         setError('Failed to load gadget details.');
       } finally {
         setLoading(false);
@@ -127,7 +127,7 @@ export default function GadgetDetail() {
   const isSeller = user?.id === gadget.seller_id;
 
   return (
-    <motion.div 
+    <Motion.div 
       className="gadget-detail-container"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
@@ -135,7 +135,7 @@ export default function GadgetDetail() {
       <div className="product-layout">
         <div className="product-gallery glass-panel">
           <div className="main-image-wrapper">
-            <motion.img 
+            <Motion.img 
               key={activeImage}
               initial={{ opacity: 0.8 }}
               animate={{ opacity: 1 }}
@@ -285,13 +285,13 @@ export default function GadgetDetail() {
 
       <AnimatePresence>
         {checkoutModalOpen && (
-          <motion.div 
+          <Motion.div 
             className="modal-overlay"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
           >
-            <motion.div 
+            <Motion.div 
               className="modal-content glass-panel"
               initial={{ scale: 0.95, y: 20 }}
               animate={{ scale: 1, y: 0 }}
@@ -345,10 +345,10 @@ export default function GadgetDetail() {
                   </button>
                 </div>
               </form>
-            </motion.div>
-          </motion.div>
+            </Motion.div>
+          </Motion.div>
         )}
       </AnimatePresence>
-    </motion.div>
+    </Motion.div>
   );
 }

@@ -1,10 +1,10 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useParams } from 'react-router-dom';
-import { useAuth } from '../contexts/AuthContext';
+import { useAuth } from '../contexts/auth-context';
 import { useChat } from '../hooks/useChat';
 import { GadgetAPI, BargainAPI } from '../services/api';
 import { Send, User } from 'lucide-react';
-import { motion } from 'framer-motion';
+import { motion as Motion } from 'framer-motion';
 import './Chat.css';
 
 export default function Chat() {
@@ -39,9 +39,7 @@ export default function Chat() {
           // unique buyers
           const buyers = [...new Set(data.map(s => s.buyer_id))];
           setActiveBuyers(buyers);
-          if (buyers.length > 0 && !selectedBuyerId) {
-            setSelectedBuyerId(buyers[0]);
-          }
+          setSelectedBuyerId(prev => prev || buyers[0] || null);
         }
       });
     }
@@ -105,7 +103,7 @@ export default function Chat() {
               messages.map((msg, idx) => {
                 const isMine = msg.sender_id === user.id; 
                 return (
-                  <motion.div 
+                  <Motion.div 
                     key={msg.id || idx}
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
@@ -115,7 +113,7 @@ export default function Chat() {
                     <span className="chat-time">
                       {msg.created_at ? new Date(msg.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : 'Now'}
                     </span>
-                  </motion.div>
+                  </Motion.div>
                 );
               })
             )}

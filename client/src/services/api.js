@@ -30,7 +30,7 @@ export async function fetchApi(endpoint, options = {}) {
   let data;
   try {
     data = await response.json();
-  } catch (err) {
+  } catch {
     if (!response.ok) throw new Error('Network response was not OK, and no JSON provided.');
     return null; // Empty 200 responses
   }

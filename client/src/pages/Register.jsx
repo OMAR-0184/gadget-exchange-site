@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { useAuth } from '../contexts/AuthContext';
+import { useAuth } from '../contexts/auth-context';
 import { UserPlus, AlertCircle } from 'lucide-react';
 import { motion } from 'framer-motion';
 import './Auth.css';

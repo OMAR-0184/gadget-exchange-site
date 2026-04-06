@@ -1,13 +1,16 @@
-const fs = require('fs');
+import fs from 'node:fs';
 
 async function testUpload() {
   // 1. Register a test user
   const email = "test" + Date.now() + "@example.com";
-  const userResp = await fetch("https://labassignment-production.up.railway.app/v1/auth/register", {
+  const registerResp = await fetch("https://labassignment-production.up.railway.app/v1/auth/register", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ email, password: "password123", full_name: "Test User" })
   });
+  if (!registerResp.ok) {
+    throw new Error(`Registration failed: ${await registerResp.text()}`);
+  }
   
   // 2. Login
   const loginResp = await fetch("https://labassignment-production.up.railway.app/v1/auth/login", {

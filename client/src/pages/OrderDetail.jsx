@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { OrdersAPI, ReviewsAPI } from '../services/api';
-import { useAuth } from '../contexts/AuthContext';
+import { useAuth } from '../contexts/auth-context';
 import { Package, Truck, CheckCircle, Clock, XCircle, FileText, ChevronLeft, RefreshCcw, Star } from 'lucide-react';
 import { motion } from 'framer-motion';
 import './OrderDetail.css';
@@ -16,6 +16,8 @@ export default function OrderDetail() {
   const [error, setError] = useState('');
   const [verifying, setVerifying] = useState(false);
   const [verificationCode, setVerificationCode] = useState('');
+  const [verificationMessage, setVerificationMessage] = useState('');
+  const [verificationMessageType, setVerificationMessageType] = useState('');
   const [updateStatusLoading, setUpdateStatusLoading] = useState(false);
   const [canceling, setCanceling] = useState(false);
 
@@ -31,6 +33,7 @@ export default function OrderDetail() {
 
   const fetchOrder = async () => {
     try {
+      setError('');
       const data = await OrdersAPI.getOne(id);
       setOrder(data);
       
@@ -66,12 +69,25 @@ export default function OrderDetail() {
 
   const handleVerifyDelivery = async (e) => {
     e.preventDefault();
+    const normalizedCode = verificationCode.replace(/\D/g, '').slice(0, 6);
+    if (normalizedCode.length !== 6) {
+      setVerificationMessage('Enter the 6-digit delivery OTP to complete the order.');
+      setVerificationMessageType('error');
+      return;
+    }
+
+    setVerificationMessage('');
+    setVerificationMessageType('');
     setVerifying(true);
     try {
-      await OrdersAPI.verifyDelivery(id, verificationCode);
+      await OrdersAPI.verifyDelivery(id, normalizedCode);
+      setVerificationCode('');
+      setVerificationMessage('Delivery verified. This order is now complete.');
+      setVerificationMessageType('success');
       await fetchOrder();
     } catch (err) {
-      alert(err.message || 'Invalid verification code.');
+      setVerificationMessage(err.message || 'Invalid verification code.');
+      setVerificationMessageType('error');
     } finally {
       setVerifying(false);
     }
@@ -290,24 +306,47 @@ export default function OrderDetail() {
               </div>
             )}
 
-            {order.status === 'shipped' && (
+            {isBuyer && order.status === 'shipped' && (
               <form className="verify-form" onSubmit={handleVerifyDelivery}>
-                <p className="help-text mb-2">Verify upon delivery:</p>
+                <p className="help-text mb-2">Enter the delivery OTP to mark this order as complete:</p>
                 <div className="flex-row">
                   <input 
                     type="text" 
                     placeholder="6-digit code" 
                     value={verificationCode}
-                    onChange={(e) => setVerificationCode(e.target.value)}
+                    onChange={(e) => {
+                      setVerificationCode(e.target.value.replace(/\D/g, '').slice(0, 6));
+                      if (verificationMessage) {
+                        setVerificationMessage('');
+                        setVerificationMessageType('');
+                      }
+                    }}
                     required
                     className="code-input flex-1"
                     maxLength={6}
+                    inputMode="numeric"
+                    pattern="[0-9]{6}"
                   />
-                  <button type="submit" className="btn-primary" disabled={verifying}>
-                    Verify
+                  <button
+                    type="submit"
+                    className="btn-primary"
+                    disabled={verifying || verificationCode.length !== 6}
+                  >
+                    {verifying ? 'Verifying...' : 'Complete Order'}
                   </button>
                 </div>
+                {verificationMessage && (
+                  <p className={`verification-message ${verificationMessageType}`}>
+                    {verificationMessage}
+                  </p>
+                )}
               </form>
+            )}
+
+            {isSeller && order.status === 'shipped' && (
+              <p className="help-text">
+                The buyer must enter the 6-digit delivery OTP on the website to complete this order.
+              </p>
             )}
 
             {order.status === 'delivered' && (
