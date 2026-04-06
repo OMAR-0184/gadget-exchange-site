@@ -113,6 +113,7 @@ export const ChatAPI = {
 
 export const UsersAPI = {
   getProfile: () => fetchApi('/users/me'),
+  getMyGadgets: () => fetchApi('/users/me/gadgets'),
   updateAddress: (data) => fetchApi('/users/me/address', { method: 'PATCH', body: JSON.stringify(data) })
 };
 

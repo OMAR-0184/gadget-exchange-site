@@ -3,7 +3,9 @@ from sqlmodel import select
 from fastapi import HTTPException
 
 from server.models.user import User
+from server.models.gadget import Gadget
 from server.schemas.order import AddressUpdate, UserProfile
+from server.schemas.gadget import GadgetResponse
 
 
 class UserService:
@@ -22,3 +24,19 @@ class UserService:
         await session.commit()
         await session.refresh(user)
         return UserProfile.model_validate(user)
+
+    @staticmethod
+    async def get_my_gadgets(user: User, session: AsyncSession) -> list[GadgetResponse]:
+        result = await session.execute(
+            select(Gadget)
+            .where(Gadget.seller_id == user.id)
+            .order_by(Gadget.created_at.desc())
+        )
+        gadgets = result.scalars().all()
+
+        responses = []
+        for gadget in gadgets:
+            payload = gadget.model_dump()
+            payload["personal_price"] = None
+            responses.append(GadgetResponse(**payload))
+        return responses

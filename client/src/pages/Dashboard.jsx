@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { GadgetAPI } from '../services/api';
+import { UsersAPI } from '../services/api';
 import { useAuth } from '../contexts/auth-context';
 import GadgetCard from '../components/GadgetCard';
 import { Loader, PackageOpen, Plus } from 'lucide-react';
@@ -15,16 +15,8 @@ export default function Dashboard() {
   useEffect(() => {
     const fetchMyListings = async () => {
       try {
-        // Since we don't have a direct /user/me/gadgets, we fetch and filter locally
-        // In a real app with thousands of items, the API should handle this filter.
-        // Fetching up to 100 to ensure we find local ones (just for this demo)
-        const params = { limit: 100 };
-        const data = await GadgetAPI.list(params);
-        const allItems = data.items || [];
-        
-        // Filter by our user ID
-        const yours = allItems.filter(g => g.seller_id === user?.id);
-        setMyGadgets(yours);
+        const data = await UsersAPI.getMyGadgets();
+        setMyGadgets(data || []);
       } catch (err) {
         console.error("Failed to fetch dashboard gadgets:", err);
       } finally {
@@ -38,6 +30,9 @@ export default function Dashboard() {
       setLoading(false);
     }
   }, [user]);
+
+  const activeListings = myGadgets.filter((gadget) => gadget.is_active).length;
+  const inactiveListings = myGadgets.length - activeListings;
 
   if (loading) {
     return (
@@ -57,8 +52,12 @@ export default function Dashboard() {
 
       <div className="dashboard-stats glass-panel">
         <div className="stat-card">
-          <span className="stat-value">{myGadgets.length}</span>
+          <span className="stat-value">{activeListings}</span>
           <span className="stat-label">Active Listings</span>
+        </div>
+        <div className="stat-card">
+          <span className="stat-value">{inactiveListings}</span>
+          <span className="stat-label">Sold Or Inactive</span>
         </div>
       </div>
 
@@ -78,6 +77,11 @@ export default function Dashboard() {
           <div className="gadget-grid">
             {myGadgets.map(gadget => (
               <Motion.div key={gadget.id} className="dashboard-item" layout>
+                {!gadget.is_active && (
+                  <div className="glass-panel" style={{ padding: '8px 12px', fontSize: '0.8rem', color: '#f59e0b', fontWeight: 700 }}>
+                    Sold / Inactive
+                  </div>
+                )}
                 <GadgetCard gadget={gadget} />
                 <div className="dashboard-item-actions">
                   <Link to={`/gadget/${gadget.id}/bargain`} className="btn-secondary flex-1 text-center">

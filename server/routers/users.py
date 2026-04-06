@@ -5,6 +5,7 @@ from server.core.dependencies import get_session, get_current_user
 from server.models.user import User
 from server.services.user_services import UserService
 from server.schemas.order import AddressUpdate, UserProfile
+from server.schemas.gadget import GadgetResponse
 
 router = APIRouter(tags=["users"])
 
@@ -23,3 +24,11 @@ async def update_address(
     session: AsyncSession = Depends(get_session),
 ):
     return await UserService.update_address(address_in, current_user, session)
+
+
+@router.get("/me/gadgets", response_model=list[GadgetResponse])
+async def get_my_gadgets(
+    current_user: User = Depends(get_current_user),
+    session: AsyncSession = Depends(get_session),
+):
+    return await UserService.get_my_gadgets(current_user, session)

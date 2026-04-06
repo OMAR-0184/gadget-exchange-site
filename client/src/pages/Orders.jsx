@@ -36,6 +36,32 @@ export default function Orders() {
   };
 
   const formatPrice = (price) => new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(price);
+  const getOrderRole = (order) => {
+    const isBuyer = Boolean(order.delivery_verification_code);
+    return isBuyer ? 'Purchase' : 'Sale';
+  };
+
+  const getDeliveryHint = (order) => {
+    const isBuyer = Boolean(order.delivery_verification_code);
+    if (order.status === 'pending') {
+      return isBuyer ? 'Waiting for seller confirmation.' : 'Review and confirm this order.';
+    }
+    if (order.status === 'confirmed') {
+      return isBuyer ? 'Seller is preparing shipment.' : 'Mark this order as shipped when it is dispatched.';
+    }
+    if (order.status === 'shipped') {
+      return isBuyer
+        ? 'Enter the delivery OTP on the order page when it arrives.'
+        : 'Buyer will enter the delivery OTP to complete this order.';
+    }
+    if (order.status === 'delivered') {
+      return 'Delivery completed successfully.';
+    }
+    if (order.status === 'cancelled') {
+      return 'This order was cancelled.';
+    }
+    return '';
+  };
 
   if (loading) {
     return (
@@ -54,7 +80,7 @@ export default function Orders() {
     >
       <div className="orders-header">
         <h1>Order History</h1>
-        <p>Track and manage your purchases and sales.</p>
+        <p>Track purchases, manage sales, and complete deliveries with OTP verification.</p>
       </div>
 
       {error && <div className="form-alert error">{error}</div>}
@@ -99,6 +125,10 @@ export default function Orders() {
                 </div>
                 <div className="order-meta">
                   <div className="meta-col">
+                    <span className="meta-label">Order Type</span>
+                    <span className="meta-val">{getOrderRole(order)}</span>
+                  </div>
+                  <div className="meta-col">
                     <span className="meta-label">Date Placed</span>
                     <span className="meta-val">{new Date(order.created_at).toLocaleDateString()}</span>
                   </div>
@@ -107,11 +137,17 @@ export default function Orders() {
                     <span className="meta-val highlight">{formatPrice(order.total_amount)}</span>
                   </div>
                 </div>
+                <div className="order-meta" style={{ marginTop: '12px' }}>
+                  <div className="meta-col" style={{ maxWidth: '100%' }}>
+                    <span className="meta-label">Delivery Status</span>
+                    <span className="meta-val">{getDeliveryHint(order)}</span>
+                  </div>
+                </div>
               </div>
 
               <div className="order-card-footer">
                 <Link to={`/order/${order.id}`} className="btn-secondary view-details-btn">
-                  View Details
+                  {order.status === 'shipped' ? 'Open Delivery Page' : 'View Details'}
                 </Link>
               </div>
             </motion.div>
