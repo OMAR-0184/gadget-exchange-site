@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { AdminAPI } from '../services/api';
-import { useAuth } from '../contexts/AuthContext';
+import { useAuth } from '../contexts/auth-context';
 import { useNavigate } from 'react-router-dom';
 import {
   Shield, Users, Package, ShoppingCart, Star,

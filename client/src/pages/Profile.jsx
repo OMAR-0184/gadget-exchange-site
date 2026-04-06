@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { UsersAPI, OrdersAPI, WishlistAPI } from '../services/api';
-import { useAuth } from '../contexts/AuthContext';
+import { useAuth } from '../contexts/auth-context';
 import { User, Package, Heart, ShoppingBag, Settings, LogOut, CheckCircle, Truck, MapPin, Info, Clock, ChevronRight, ShoppingCart, Eye } from 'lucide-react';
 import { motion } from 'framer-motion';
 import './Profile.css';

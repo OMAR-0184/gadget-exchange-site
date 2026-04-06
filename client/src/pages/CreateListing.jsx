@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { GadgetAPI } from '../services/api';
 import { UploadCloud, CheckCircle, AlertCircle, X } from 'lucide-react';
-import { motion } from 'framer-motion';
+import { motion as Motion } from 'framer-motion';
 import './CreateListing.css';
 
 export default function CreateListing() {
@@ -84,7 +84,7 @@ export default function CreateListing() {
 
   return (
     <div className="create-listing-container">
-      <motion.div 
+      <Motion.div 
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         className="glass-panel form-card"
@@ -210,7 +210,7 @@ export default function CreateListing() {
             </button>
           </div>
         </form>
-      </motion.div>
+      </Motion.div>
     </div>
   );
 }

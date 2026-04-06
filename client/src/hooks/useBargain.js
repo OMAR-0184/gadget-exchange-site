@@ -23,7 +23,7 @@ export function useBargain(gadgetId, token) {
       try {
         const data = JSON.parse(event.data);
         setMessages((prev) => [...prev, data]);
-      } catch (err) {
+      } catch {
         console.error('Invalid WS message payload', event.data);
       }
     };

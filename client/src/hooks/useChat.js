@@ -32,7 +32,7 @@ export function useChat(gadgetId, token, receiverId) {
         else if (data.type === 'message') {
           setMessages((prev) => [...prev, data]);
         }
-      } catch (err) {
+      } catch {
         console.error('Invalid Chat WS message', event.data);
       }
     };

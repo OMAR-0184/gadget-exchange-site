@@ -1,5 +1,5 @@
 import React from 'react';
-import { motion } from 'framer-motion';
+import { motion as Motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { BadgeCheck, ShoppingCart, Star } from 'lucide-react';
 import './GadgetCard.css';
@@ -12,9 +12,10 @@ export default function GadgetCard({ gadget }) {
   };
 
   const conditionLabel = gadget.condition?.replace('_', ' ').toUpperCase();
+  const displayRating = gadget.average_rating || '4.8';
 
   return (
-    <motion.div
+    <Motion.div
       className="vantage-card glass-panel"
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
@@ -40,7 +41,7 @@ export default function GadgetCard({ gadget }) {
             <span className="vantage-category">{gadget.category}</span>
             <div className="vantage-rating">
               <Star size={12} fill="#eab308" color="#eab308" />
-              <span>{(4.5 + Math.random() * 0.5).toFixed(1)}</span>
+              <span>{displayRating}</span>
             </div>
           </div>
 
@@ -57,6 +58,6 @@ export default function GadgetCard({ gadget }) {
           </div>
         </div>
       </Link>
-    </motion.div>
+    </Motion.div>
   );
 }

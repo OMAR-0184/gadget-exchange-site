@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { GadgetAPI } from '../services/api';
-import { useAuth } from '../contexts/AuthContext';
+import { useAuth } from '../contexts/auth-context';
 import GadgetCard from '../components/GadgetCard';
 import { Loader, PackageOpen, Plus } from 'lucide-react';
 import { Link } from 'react-router-dom';
-import { motion } from 'framer-motion';
+import { motion as Motion } from 'framer-motion';
 import './Dashboard.css';
 
 export default function Dashboard() {
@@ -17,14 +17,10 @@ export default function Dashboard() {
       try {
         // Since we don't have a direct /user/me/gadgets, we fetch and filter locally
         // In a real app with thousands of items, the API should handle this filter.
-        let allItems = [];
-        let cursor = null;
-        let keepFetching = true;
-
         // Fetching up to 100 to ensure we find local ones (just for this demo)
         const params = { limit: 100 };
         const data = await GadgetAPI.list(params);
-        allItems = data.items || [];
+        const allItems = data.items || [];
         
         // Filter by our user ID
         const yours = allItems.filter(g => g.seller_id === user?.id);
@@ -81,7 +77,7 @@ export default function Dashboard() {
         ) : (
           <div className="gadget-grid">
             {myGadgets.map(gadget => (
-              <motion.div key={gadget.id} className="dashboard-item" layout>
+              <Motion.div key={gadget.id} className="dashboard-item" layout>
                 <GadgetCard gadget={gadget} />
                 <div className="dashboard-item-actions">
                   <Link to={`/gadget/${gadget.id}/bargain`} className="btn-secondary flex-1 text-center">
@@ -91,7 +87,7 @@ export default function Dashboard() {
                     Chats
                   </Link>
                 </div>
-              </motion.div>
+              </Motion.div>
             ))}
           </div>
         )}
